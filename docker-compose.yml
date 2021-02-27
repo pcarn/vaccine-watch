@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  clock:
+    build: .
+    command: python clock.py
+    volumes:
+      - .:/app
+    links:
+      - redis
+    environment:
+      - HYVEE_RADIUS=20
+      - HYVEE_LATITUDE=ASDF
+      - HYVEE_LONGITUDE=ASDF
+  redis:
+    image: "redis:alpine"
