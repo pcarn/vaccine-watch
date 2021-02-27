@@ -1,5 +1,7 @@
 # vaccine-watch
-Bot to notify when vaccine appointments are available
+Bot to notify when vaccine appointments are available.
+
+I have no affiliation with these clinics.
 
 ## Setup
 1. [Install docker](https://docs.docker.com/get-docker/)
