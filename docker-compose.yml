@@ -10,7 +10,11 @@ services:
     environment:
       - ENABLE_HYVEE=true
       - HYVEE_RADIUS=20
-      - HYVEE_LATITUDE=ASDF
-      - HYVEE_LONGITUDE=ASDF
+      - HYVEE_LATITUDE=39.1040382
+      - HYVEE_LONGITUDE=-94.57018029999999
+      - NOTIFY_SLACK=true
+      - SLACK_CHANNEL=#kc-vaccine-watch
+    env_file:
+      - .env
   redis:
     image: "redis:alpine"
