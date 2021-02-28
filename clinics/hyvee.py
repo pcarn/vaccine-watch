@@ -6,11 +6,15 @@ import requests
 
 def format_hyvee_data(clinic):
     return {
-        "name": clinic["location"]["nickname"] or clinic["location"]["name"],
+        "link": "https://www.hy-vee.com/my-pharmacy/covid-vaccine-consent",
+        "id": "hyvee-{}".format(clinic["location"]["locationId"]),
+        "name": clinic["location"]["name"],
+        "state": clinic["location"]["address"]["state"],
+        "zip": clinic["location"]["address"]["zip"],
     }
 
 
-def get_available_hyvees():
+def get_hyvee_clinics():
     url = "https://www.hy-vee.com/my-pharmacy/api/graphql"
     headers = {"content-type": "application/json"}
     payload = {
@@ -20,19 +24,31 @@ def get_available_hyvees():
             "latitude": float(os.environ["HYVEE_LATITUDE"]),
             "longitude": float(os.environ["HYVEE_LONGITUDE"]),
         },
-        "query": "query SearchPharmaciesNearPointWithCovidVaccineAvailability($latitude: Float\u0021, $longitude: Float\u0021, $radius: Int\u0021 = 10) {\n searchPharmaciesNearPoint(latitude: $latitude, longitude: $longitude, radius: $radius) {\n distance\n location {\n locationId\n name\n nickname\n phoneNumber\n businessCode\n isCovidVaccineAvailable\n covidVaccineEligibilityTerms\n address {\n line1\n line2\n city\n state\n zip\n latitude\n longitude\n __typename\n }\n __typename\n }\n __typename\n }\n}\n",
+        "query": "query SearchPharmaciesNearPointWithCovidVaccineAvailability($latitude: Float\u0021, $longitude: Float\u0021, $radius: Int\u0021) {searchPharmaciesNearPoint(latitude: $latitude, longitude: $longitude, radius: $radius) {location {locationId name isCovidVaccineAvailable address {state zip}}}}",
     }
     response = requests.post(url, headers=headers, data=json.dumps(payload))
 
-    clinics = response.json()["data"]["searchPharmaciesNearPoint"]
-    clinics_with_vaccine = [
-        format_hyvee_data(clinic)
-        for clinic in clinics
-        if clinic["location"]["isCovidVaccineAvailable"] is False  # change to True
-    ]
+    if response.status_code == 200:
+        clinics = response.json()["data"]["searchPharmaciesNearPoint"]
+        clinics_with_vaccine = [
+            format_hyvee_data(clinic)
+            for clinic in clinics
+            if clinic["location"]["isCovidVaccineAvailable"] is True
+        ]
+        clinics_without_vaccine = [
+            format_hyvee_data(clinic)
+            for clinic in clinics
+            if clinic["location"]["isCovidVaccineAvailable"] is False
+        ]
 
-    return clinics_with_vaccine
+    else:
+        logging.error(
+            "Bad response from Hyvee: Code {}: {}", response.status_code, response.text
+        )
+        clinics_with_vaccine = []
+        clinics_without_vaccine = []
 
-
-# If appointments are available,
-# use redis to make sure we don't notify again until they're unavailable
+    return {
+        "with_vaccine": clinics_with_vaccine,
+        "without_vaccine": clinics_without_vaccine,
+    }
