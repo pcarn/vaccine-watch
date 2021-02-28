@@ -20,6 +20,7 @@ This project has no affiliation with Hy-Vee.
 ## Lint
 1. Install [pre-commit](https://pre-commit.com)
 1. `pre-commit install`
+
 Lint is run as a pre-commit, or on-demand with `pre-commit run --all-files`
 
 ## Deployment Instructions
