@@ -23,6 +23,19 @@ This project has no affiliation with Hy-Vee.
 
 Lint is run as a pre-commit, or on-demand with `pre-commit run --all-files`
 
+## Example
+```
+:large_green_circle: <!channel> Vaccines available at these clinics:
+• MO: Hy-Vee Kansas City #2. Sign up here, zip code 64118
+• KS: Hy-Vee Mission. Sign up here, zip code 66202
+```
+
+```
+:red_circle: Vaccines no longer available at these clinics:
+• MO: Hy-Vee Kansas City #2
+• KS: Hy-Vee Mission
+```
+
 ## Deployment Instructions
 You can build a docker container, or push the source to heroku.
 
