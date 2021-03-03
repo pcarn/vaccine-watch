@@ -50,7 +50,7 @@ def format_available_message(clinic):
 
 
 def format_unavailable_message(clinic):
-    return "Vaccines no longer available at {}.".format(clinic["name"])
+    return "Vaccine appointments no longer available at {}.".format(clinic["name"])
 
 
 def notify_twitter_available_clinics(clinics):

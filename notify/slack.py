@@ -35,9 +35,11 @@ def format_available_message(clinics):
 
 
 def format_unavailable_message(clinics):
-    message = ":red_circle: Vaccines no longer available at {} clinic{}:".format(
-        "these" if len(clinics) > 1 else "this",
-        "s" if len(clinics) > 1 else "",
+    message = (
+        ":red_circle: Vaccine appointments no longer available at {} clinic{}:".format(
+            "these" if len(clinics) > 1 else "this",
+            "s" if len(clinics) > 1 else "",
+        )
     )
     # Add emoji
     for clinic in clinics:
