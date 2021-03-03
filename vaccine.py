@@ -41,7 +41,7 @@ def check_for_appointments():
         print("{} newly unavailable clinics".format(len(newly_unavailable_clinics)))
 
     if len(newly_available_clinics) == 0 and len(newly_unavailable_clinics) == 0:
-        logging.info("nothing to notify")
+        print("nothing to notify")
 
     for clinic in newly_unavailable_clinics:
         redis_client.delete("tweet-{}".format(clinic["id"]))
