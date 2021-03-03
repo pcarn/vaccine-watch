@@ -14,8 +14,17 @@ def format_available_message(clinics):
         "s" if len(clinics) > 1 else "",
     )
     for clinic in clinics:
-        message += "\n• *{}*: Hy-Vee {}. Sign up <{}|here>, zip code {}".format(
-            clinic["state"], clinic["name"], clinic["link"], clinic["zip"]
+        if "earliest_appointment_day" in clinic:
+            if clinic["earliest_appointment_day"] == clinic["latest_appointment_day"]:
+                day_string = " on *{}*".format(clinic["earliest_appointment_day"])
+            else:
+                day_string = " from *{}* to *{}*".format(
+                    clinic["earliest_appointment_day"], clinic["latest_appointment_day"]
+                )
+        else:
+            day_string = ""
+        message += "\n• *{}*: Hy-Vee {}{}. Sign up <{}|here>, zip code {}".format(
+            clinic["state"], clinic["name"], day_string, clinic["link"], clinic["zip"]
         )
     return message
 
