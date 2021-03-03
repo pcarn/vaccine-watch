@@ -100,13 +100,16 @@ def get_available_manufacturer_ids(location_id):
     response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
     if response.status_code == 200:
-        return [
-            manufacturer["covidVaccineManufacturerId"]
-            for manufacturer in response.json()["data"][
-                "getCovidVaccineLocationAvailability"
+        data = response.json()["data"]["getCovidVaccineLocationAvailability"]
+        if isinstance(data, list):
+            return [
+                manufacturer["covidVaccineManufacturerId"]
+                for manufacturer in data
+                if manufacturer["hasAvailability"] is True
             ]
-            if manufacturer["hasAvailability"] is True
-        ]
+        else:
+            logging.error("Bad response from Hy-Vee, no list in response")
+            return []
     else:
         logging.error(
             "Bad response from Hyvee: Code {}: {}", response.status_code, response.text
@@ -127,7 +130,12 @@ def get_available_appointment_times(location_id, manufacturer_id):
     response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
     if response.status_code == 200:
-        return response.json()["data"]["getCovidVaccineTimeSlots"]
+        data = response.json()["data"]["getCovidVaccineTimeSlots"]
+        if isinstance(data, list):
+            return data
+        else:
+            logging.error("Bad response from Hy-Vee, no list in response")
+            return []
     else:
         logging.error(
             "Bad response from Hyvee: Code {}: {}", response.status_code, response.text
