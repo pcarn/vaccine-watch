@@ -3,11 +3,12 @@ import os
 
 import redis
 
-from clinics.hyvee import get_hyvee_clinics
+from clinics.hyvee import HyVee
 from constants import TRUE_VALUES
 from notify import notify_available, notify_unavailable
 
 redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
+hyvee = HyVee()
 
 # If already notified for a clinic, don't notify again.
 # When a clinic doesn't have vaccines, reset to not notified.
@@ -18,7 +19,7 @@ def check_for_appointments():
     newly_unavailable_clinics = []
 
     if os.environ["ENABLE_HYVEE"].lower() in TRUE_VALUES:
-        hyvee_clinics = get_hyvee_clinics()
+        hyvee_clinics = hyvee.get_locations()
         available_clinics += hyvee_clinics["with_vaccine"]
         unavailable_clinics += hyvee_clinics["without_vaccine"]
 
