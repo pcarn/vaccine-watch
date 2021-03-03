@@ -38,7 +38,7 @@ def format_hyvee_data(clinic):
     return {
         "link": "https://www.hy-vee.com/my-pharmacy/covid-vaccine-consent",
         "id": "hyvee-{}".format(clinic["location"]["locationId"]),
-        "name": clinic["location"]["name"],
+        "name": "Hy-Vee {}".format(clinic["location"]["name"]),
         "state": clinic["location"]["address"]["state"],
         "zip": clinic["location"]["address"]["zip"],
     }
@@ -58,23 +58,28 @@ def get_hyvee_clinics():
 
     if response.status_code == 200:
         clinics = response.json()["data"]["searchPharmaciesNearPoint"]
-        clinics_with_vaccine = [
-            {
-                **format_hyvee_data(clinic),
-                **get_appointment_info(clinic["location"]["locationId"]),
-            }
-            for clinic in clinics
-            if clinic["location"]["isCovidVaccineAvailable"] is True
-        ]
-        clinics_without_vaccine = [
-            format_hyvee_data(clinic)
-            for clinic in clinics
-            if clinic["location"]["isCovidVaccineAvailable"] is False
-        ]
+        if isinstance(clinics, list):
+            clinics_with_vaccine = [
+                {
+                    **format_hyvee_data(clinic),
+                    **get_appointment_info(clinic["location"]["locationId"]),
+                }
+                for clinic in clinics
+                if clinic["location"]["isCovidVaccineAvailable"] is True
+            ]
+            clinics_without_vaccine = [
+                format_hyvee_data(clinic)
+                for clinic in clinics
+                if clinic["location"]["isCovidVaccineAvailable"] is False
+            ]
+        else:
+            logging.error("Bad response from Hy-Vee, no list in response")
+            clinics_with_vaccine = []
+            clinics_without_vaccine = []
 
     else:
         logging.error(
-            "Bad response from Hyvee: Code {}: {}", response.status_code, response.text
+            "Bad response from Hy-Vee: Code {}: {}", response.status_code, response.text
         )
         clinics_with_vaccine = []
         clinics_without_vaccine = []

@@ -42,10 +42,16 @@ You can build a docker container, or push the source to heroku.
 Required Environment Variables:
 - `REDIS_URL`: A redis service
 - `VACCINE_CHECK_INTERVAL`: How often (in seconds) to check
-- `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
-- `HYVEE_RADIUS`: Within how many miles to check Hy-Vee pharmacies
-- `HYVEE_LATITUDE`: Latitude of the location to check (e.g. 39.1040382)
-- `HYVEE_LONGITUDE`: Latitude of the location to check (e.g. -94.5701803)
-- `SLACK_BOT_TOKEN`: (optional, won't post to slack if missing): Token for your slack integration
-- `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
-- `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
+
+Optional Environment Variables:
+- Hy-Vee:
+  - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
+  - `HYVEE_RADIUS`: Within how many miles to check Hy-Vee pharmacies
+  - `HYVEE_LATITUDE`: Latitude of the location to check (e.g. 39.1040382)
+  - `HYVEE_LONGITUDE`: Latitude of the location to check (e.g. -94.5701803)
+- Slack:
+  - `SLACK_BOT_TOKEN`: Token for your slack integration
+  - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
+  - `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
+- Twitter:
+  - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`

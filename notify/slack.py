@@ -8,10 +8,14 @@ from constants import TRUE_VALUES
 
 
 def format_available_message(clinics):
-    message = ":large_green_circle: {}Vaccines available at {} clinic{}:".format(
-        "<!channel> " if os.environ["SLACK_TAG_CHANNEL"].lower() in TRUE_VALUES else "",
-        "these" if len(clinics) > 1 else "this",
-        "s" if len(clinics) > 1 else "",
+    message = (
+        ":large_green_circle: {}Vaccine appointments available at {} clinic{}:".format(
+            "<!channel> "
+            if os.environ["SLACK_TAG_CHANNEL"].lower() in TRUE_VALUES
+            else "",
+            "these" if len(clinics) > 1 else "this",
+            "s" if len(clinics) > 1 else "",
+        )
     )
     for clinic in clinics:
         if "earliest_appointment_day" in clinic:
@@ -23,7 +27,8 @@ def format_available_message(clinics):
                 )
         else:
             day_string = ""
-        message += "\n• *{}*: Hy-Vee {}{}. Sign up <{}|here>, zip code {}".format(
+
+        message += "\n• *{}*: {}{}. Sign up <{}|here>, zip code {}".format(
             clinic["state"], clinic["name"], day_string, clinic["link"], clinic["zip"]
         )
     return message
@@ -36,7 +41,7 @@ def format_unavailable_message(clinics):
     )
     # Add emoji
     for clinic in clinics:
-        message += "\n• *{}*: Hy-Vee {}".format(clinic["state"], clinic["name"])
+        message += "\n• *{}*: {}".format(clinic["state"], clinic["name"])
     return message
 
 
