@@ -12,11 +12,11 @@ This project has no affiliation with Hy-Vee.
 ## Example
 Slack
 
-<img src="https://user-images.githubusercontent.com/5343931/109749025-81a4a680-7b9f-11eb-96e6-55c3742bad25.png" alt="Example of messages in Slack" width=500 />
+<img src="https://user-images.githubusercontent.com/5343931/109823900-f4446f00-7bfd-11eb-8661-68167f013cf2.png" alt="Example of messages in Slack" width=500 />
 
 Twitter
 
-<img src="https://user-images.githubusercontent.com/5343931/109749189-c2042480-7b9f-11eb-89f2-2190e4d94585.png" alt="Example of messages in Twitter" width=500 />
+<img src="https://user-images.githubusercontent.com/5343931/109823499-9b74d680-7bfd-11eb-88f4-45743d824e57.png" alt="Example of messages in Twitter" width=500 />
 
 ## Setup
 1. [Install docker](https://docs.docker.com/get-docker/)
