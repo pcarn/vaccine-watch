@@ -20,11 +20,25 @@ Twitter
 
 ## Setup
 1. [Install docker](https://docs.docker.com/get-docker/)
-2. Run `cp .env.template .env`
-3. Fill in the variables in `.env`:
-  - `SLACK_BOT_TOKEN`: token for slack integration
-  - `SLACK_CHANNEL`: channel to post to (e.g. `#vaccine-watch`)
-4. `docker-compose up --build`
+1. Run `cp .env.template .env`
+1. Fill in the variables in `.env` if you want slack or twitter integration.
+1. `docker-compose up --build`
+
+### Slack
+1. While logged into your slack account, go to https://api.slack.com/apps/
+1. Click `Create New App`
+1. Choose a name and workspace
+1. Click `Permissions`, and `Add an OAuth Scope`
+1. Add `chat:write:public` and `chat:write`
+1. At the top, click `Install to Workspace`
+1. Copy your OAuth Token to use as `SLACK_BOT_TOKEN`
+
+### Twitter
+1. Apply for a [Twitter Developer account](https://developer.twitter.com/en/portal/petition/use-case)
+1. Once you have the account, go to the [Developer Portal](https://developer.twitter.com/en/portal/dashboard)
+1. Create a project and an app for your bot
+1. Add `Read & Write` permissions to your app
+1. In `Keys & Tokens`, generate Consumer Keys and Access Token/Secret to use as environment variables
 
 ## Lint
 1. Install [pre-commit](https://pre-commit.com)
@@ -33,7 +47,11 @@ Twitter
 Lint is run as a pre-commit, or on-demand with `pre-commit run --all-files`
 
 ## Deployment Instructions
-You can build a docker container, or push the source to heroku.
+### Docker
+You can build a docker image with the Dockerfile, and run it with a redis server.
+
+### Heroku
+You can create an app in heroku, add a free redis plan, and push the source. Configure the dynos to enable `clock`.
 
 Required Environment Variables:
 - `REDIS_URL`: A redis service
