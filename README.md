@@ -1,7 +1,7 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, and sending notifications to slack.
+Supports checking Hy-Vee, and sending notifications to Slack and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
@@ -9,32 +9,28 @@ PRs welcome to support other clinics or notification methods.
 
 This project has no affiliation with Hy-Vee.
 
+## Example
+Slack
+
+<img src="https://user-images.githubusercontent.com/5343931/109749025-81a4a680-7b9f-11eb-96e6-55c3742bad25.png" alt="Example of messages in Slack" width=500 />
+
+Twitter
+
+<img src="https://user-images.githubusercontent.com/5343931/109749189-c2042480-7b9f-11eb-89f2-2190e4d94585.png" alt="Example of messages in Twitter" width=500 />
+
 ## Setup
 1. [Install docker](https://docs.docker.com/get-docker/)
-1. Run `cp .env.template .env`
-1. Fill in the variables in `.env`:
+2. Run `cp .env.template .env`
+3. Fill in the variables in `.env`:
   - `SLACK_BOT_TOKEN`: token for slack integration
   - `SLACK_CHANNEL`: channel to post to (e.g. `#vaccine-watch`)
-1. `docker-compose up --build`
+4. `docker-compose up --build`
 
 ## Lint
 1. Install [pre-commit](https://pre-commit.com)
 1. `pre-commit install`
 
 Lint is run as a pre-commit, or on-demand with `pre-commit run --all-files`
-
-## Example
-```
-:large_green_circle: <!channel> Vaccines available at these clinics:
-• MO: Hy-Vee Kansas City #2. Sign up here, zip code 64118
-• KS: Hy-Vee Mission. Sign up here, zip code 66202
-```
-
-```
-:red_circle: Vaccines no longer available at these clinics:
-• MO: Hy-Vee Kansas City #2
-• KS: Hy-Vee Mission
-```
 
 ## Deployment Instructions
 You can build a docker container, or push the source to heroku.
