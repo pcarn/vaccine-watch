@@ -14,7 +14,6 @@ services:
       - HYVEE_RADIUS=20
       - HYVEE_LATITUDE=39.1040382
       - HYVEE_LONGITUDE=-94.5701803
-      - NOTIFY_SLACK=true
       - SLACK_TAG_CHANNEL=false
     env_file:
       - .env

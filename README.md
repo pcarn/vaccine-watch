@@ -46,7 +46,6 @@ Required Environment Variables:
 - `HYVEE_RADIUS`: Within how many miles to check Hy-Vee pharmacies
 - `HYVEE_LATITUDE`: Latitude of the location to check (e.g. 39.1040382)
 - `HYVEE_LONGITUDE`: Latitude of the location to check (e.g. -94.5701803)
-- `NOTIFY_SLACK`: If you want to notify Slack when appointments are available or no longer available
+- `SLACK_BOT_TOKEN`: (optional, won't post to slack if missing): Token for your slack integration
 - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
-- `SLACK_BOT_TOKEN`: Token for your slack integration
 - `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
