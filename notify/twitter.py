@@ -28,7 +28,7 @@ class Twitter:
 client = Twitter()
 
 
-def format_available_message(clinic):
+def format_available_message(clinic, retry_attempt):
     if "earliest_appointment_day" in clinic:
         if clinic["earliest_appointment_day"] == clinic["latest_appointment_day"]:
             day_string = " on {}".format(clinic["earliest_appointment_day"])
@@ -39,12 +39,13 @@ def format_available_message(clinic):
     else:
         day_string = ""
 
-    return "{}Vaccine appointments available at {}{}. Sign up here, zip code {}:\n{}".format(
+    return "{}Vaccine appointments available at {}{}. Sign up here, zip code {}:\n{}{}".format(
         "{}: ".format(clinic["state"]) if "state" in clinic else "",
         clinic["name"],
         day_string,
         clinic["zip"],
         shorten_url(clinic["link"]),
+        " (#{})".format(retry_attempt) if retry_attempt > 0 else "",
     )
 
 
@@ -52,13 +53,20 @@ def format_unavailable_message(clinic):
     return "Vaccine appointments no longer available at {}.".format(clinic["name"])
 
 
+def notify_clinic_available(self, clinic, retry_attempt=0):
+    try:
+        response = client.post_tweet(format_available_message(clinic, retry_attempt))
+        redis_client.set("tweet-{}".format(clinic["id"]), response.id)
+    except twitter.error.TwitterError as exception:
+        if retry_attempt < 5 and exception.message[0]["code"] == 170:  # Duplicate
+            notify_clinic_available(clinic, retry_attempt=(retry_attempt + 1))
+        else:
+            logging.exception("Error when posting tweet")
+
+
 def notify_twitter_available_clinics(clinics):
     for clinic in clinics:
-        try:
-            response = client.post_tweet(format_available_message(clinic))
-            redis_client.set("tweet-{}".format(clinic["id"]), response.id)
-        except twitter.error.TwitterError:
-            logging.exception("Error when posting tweet")
+        notify_clinic_available(clinic)
 
 
 def notify_twitter_unavailable_clinics(clinics):
