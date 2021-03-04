@@ -53,7 +53,7 @@ def format_unavailable_message(clinic):
     return "Vaccine appointments no longer available at {}.".format(clinic["name"])
 
 
-def notify_clinic_available(self, clinic, retry_attempt=0):
+def notify_clinic_available(clinic, retry_attempt=0):
     try:
         response = client.post_tweet(format_available_message(clinic, retry_attempt))
         redis_client.set("tweet-{}".format(clinic["id"]), response.id)
