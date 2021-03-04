@@ -28,8 +28,12 @@ def format_available_message(clinics):
         else:
             day_string = ""
 
-        message += "\n• *{}*: {}{}. Sign up <{}|here>, zip code {}".format(
-            clinic["state"], clinic["name"], day_string, clinic["link"], clinic["zip"]
+        message += "\n• {}{}{}. Sign up <{}|here>, zip code {}".format(
+            "*{}*: ".format(clinic["state"]) if "state" in clinic else "",
+            clinic["name"],
+            day_string,
+            clinic["link"],
+            clinic["zip"],
         )
     return message
 
@@ -41,9 +45,11 @@ def format_unavailable_message(clinics):
             "s" if len(clinics) > 1 else "",
         )
     )
-    # Add emoji
     for clinic in clinics:
-        message += "\n• *{}*: {}".format(clinic["state"], clinic["name"])
+        message += "\n• {}{}".format(
+            "*{}*: ".format(clinic["state"]) if "state" in clinic else "",
+            clinic["name"],
+        )
     return message
 
 

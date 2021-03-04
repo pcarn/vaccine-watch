@@ -16,9 +16,9 @@ class HyVee(Clinic):
         payload = {
             "operationName": "SearchPharmaciesNearPointWithCovidVaccineAvailability",
             "variables": {
-                "radius": int(os.environ["HYVEE_RADIUS"]),
-                "latitude": float(os.environ["HYVEE_LATITUDE"]),
-                "longitude": float(os.environ["HYVEE_LONGITUDE"]),
+                "radius": int(os.environ["RADIUS"]),
+                "latitude": float(os.environ["LATITUDE"]),
+                "longitude": float(os.environ["LONGITUDE"]),
             },
             "query": "query SearchPharmaciesNearPointWithCovidVaccineAvailability($latitude: Float\u0021, $longitude: Float\u0021, $radius: Int\u0021) {searchPharmaciesNearPoint(latitude: $latitude, longitude: $longitude, radius: $radius) {location {locationId name isCovidVaccineAvailable address {state zip}}}}",
         }

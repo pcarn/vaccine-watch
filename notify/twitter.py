@@ -39,13 +39,12 @@ def format_available_message(clinic):
     else:
         day_string = ""
 
-    return "{}: Vaccine appointments available at {}{}. Sign up here, zip code {}\n{}".format(
-        clinic["state"],
+    return "{}Vaccine appointments available at {}{}. Sign up here, zip code {}:\n{}".format(
+        "{}: ".format(clinic["state"]) if "state" in clinic else "",
         clinic["name"],
         day_string,
         clinic["zip"],
         shorten_url(clinic["link"]),
-        clinic["link"],
     )
 
 

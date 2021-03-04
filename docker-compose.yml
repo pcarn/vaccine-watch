@@ -11,9 +11,10 @@ services:
       - REDIS_URL=redis://redis:6379
       - VACCINE_CHECK_INTERVAL=60
       - ENABLE_HYVEE=true
-      - HYVEE_RADIUS=20
-      - HYVEE_LATITUDE=39.1040382
-      - HYVEE_LONGITUDE=-94.5701803
+      - ENABLE_WALGREENS=true
+      - RADIUS=20
+      - LATITUDE=39.1018061
+      - LONGITUDE=-94.5812623
       - SLACK_TAG_CHANNEL=false
     env_file:
       - .env
