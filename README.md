@@ -65,10 +65,12 @@ Required Environment Variables:
 - `RADIUS`: Within how many miles to check (Must be less than 25)
 - `LATITUDE`: Latitude of the location to check (e.g. 39.1040382)
 - `LONGITUDE`: Latitude of the location to check (e.g. -94.5701803)
+- `ZIP_CODE`: Zip Code of the location to check (e.g. 64106)
 
 Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
+- `ENABLE_CVS`: If you want to check CVS pharmacies
 - Slack:
   - `SLACK_BOT_TOKEN`: Token for your slack integration
   - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available

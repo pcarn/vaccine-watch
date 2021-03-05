@@ -1,3 +1,4 @@
+import logging
 import os
 from datetime import datetime
 
@@ -8,7 +9,7 @@ from . import Clinic
 
 
 class Walgreens(Clinic):
-    def get_locations(self, radius=20):
+    def get_locations(self):
         url = "https://www.walgreens.com/hcschedulersvc/svc/v1/immunizationLocations/availability"
         headers = {
             "x-xsrf-token": os.environ["WALGREENS_X_XSRF_TOKEN"],
@@ -25,7 +26,7 @@ class Walgreens(Clinic):
                     "%Y-%m-%d"
                 )
             },
-            "radius": radius,
+            "radius": max(20, int(os.environ["RADIUS"])),
         }
         response = requests.post(url, headers=headers, json=payload)
 
@@ -33,7 +34,7 @@ class Walgreens(Clinic):
             "id": "walgreens",
             "name": "Walgreens",
             "link": "https://www.walgreens.com/findcare/vaccination/covid-19/location-screening",
-            "zip": "64106",
+            "zip": os.environ["ZIP_CODE"],
         }
 
         if response.status_code == 200:

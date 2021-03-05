@@ -3,22 +3,25 @@ import os
 
 import redis
 
+from clinics.cvs import CVS
 from clinics.hyvee import HyVee
 from clinics.walgreens import Walgreens
 from constants import TRUE_VALUES
 from notify import notify_available, notify_unavailable
 
 redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
-hyvee = HyVee()
-walgreens = Walgreens()
+
+
 enabled_clinics = []
+if "ENABLE_CVS" in os.environ and os.environ["ENABLE_CVS"].lower() in TRUE_VALUES:
+    enabled_clinics.append(CVS())
 if "ENABLE_HYVEE" in os.environ and os.environ["ENABLE_HYVEE"].lower() in TRUE_VALUES:
-    enabled_clinics.append(hyvee)
+    enabled_clinics.append(HyVee())
 if (
     "ENABLE_WALGREENS" in os.environ
     and os.environ["ENABLE_WALGREENS"].lower() in TRUE_VALUES
 ):
-    enabled_clinics.append(walgreens)
+    enabled_clinics.append(Walgreens())
 
 # If already notified for a clinic, don't notify again.
 # When a clinic doesn't have vaccines, reset to not notified.
