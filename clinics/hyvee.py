@@ -41,7 +41,7 @@ class HyVee(Clinic):
                     if clinic["location"]["isCovidVaccineAvailable"] is False
                 ]
             else:
-                logging.error("Bad response from Hy-Vee, no list in response")
+                logging.warning("Bad response from Hy-Vee, no list in response")
                 clinics_with_vaccine = []
                 clinics_without_vaccine = []
 
@@ -77,7 +77,7 @@ def get_available_manufacturer_ids(location_id):
                 if manufacturer["hasAvailability"] is True
             ]
         else:
-            logging.error("Bad response from Hy-Vee, no list in response")
+            logging.warning("Bad response from Hy-Vee, no list in response")
             return []
     else:
         logging.error(
@@ -103,7 +103,7 @@ def get_available_appointment_times(location_id, manufacturer_id):
         if isinstance(data, list):
             return data
         else:
-            logging.error("Bad response from Hy-Vee, no list in response")
+            logging.warning("Bad response from Hy-Vee, no list in response")
             return []
     else:
         logging.error(
