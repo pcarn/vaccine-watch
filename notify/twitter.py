@@ -27,6 +27,8 @@ class Twitter:
 
 client = Twitter()
 
+emojis = [None, "😷", "💉", "😷💉", "💉😷"]
+
 
 def format_available_message(clinic, retry_attempt):
     if "earliest_appointment_day" in clinic:
@@ -45,7 +47,7 @@ def format_available_message(clinic, retry_attempt):
         day_string,
         clinic["zip"],
         shorten_url(clinic["link"]),
-        " (#{})".format(retry_attempt) if retry_attempt > 0 else "",
+        " {}".format(emojis[retry_attempt]) if retry_attempt > 0 else "",
     )
 
 
@@ -58,7 +60,7 @@ def notify_clinic_available(clinic, retry_attempt=0):
         response = client.post_tweet(format_available_message(clinic, retry_attempt))
         redis_client.set("tweet-{}".format(clinic["id"]), response.id)
     except twitter.error.TwitterError as exception:
-        if retry_attempt < 5 and exception.message[0]["code"] == 170:  # Duplicate
+        if retry_attempt < 4 and exception.message[0]["code"] == 170:  # Duplicate Tweet
             notify_clinic_available(clinic, retry_attempt=(retry_attempt + 1))
         else:
             logging.exception("Error when posting tweet")
