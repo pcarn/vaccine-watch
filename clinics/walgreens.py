@@ -47,9 +47,9 @@ class Walgreens(Clinic):
 
         else:
             logging.error(
-                "Bad response from Walgreens: Code {}: {}",
-                response.status_code,
-                response.text,
+                "Bad response from Walgreens: Code {}: {}".format(
+                    response.status_code, response.text
+                )
             )
             clinics_with_vaccine = []
             clinics_without_vaccine = []

@@ -59,9 +59,9 @@ class CVS(Clinic):
 
         else:
             logging.error(
-                "Bad response from CVS: Code {}: {}",
-                response.status_code,
-                response.text,
+                "Bad response from CVS: Code {}: {}".format(
+                    response.status_code, response.text
+                )
             )
             clinics_with_vaccine = []
             clinics_without_vaccine = []
