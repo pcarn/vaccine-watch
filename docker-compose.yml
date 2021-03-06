@@ -14,6 +14,7 @@ services:
       - ENABLE_WALGREENS=true
       - ENABLE_CVS=true
       - ENABLE_COSENTINOS=true
+      - ENABLE_BALLS=true
       - RADIUS=20
       - LATITUDE=39.1018061
       - LONGITUDE=-94.5812623
