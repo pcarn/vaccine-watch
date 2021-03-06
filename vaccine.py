@@ -3,6 +3,7 @@ import os
 
 import redis
 
+from clinics.cosentinos import Cosentinos
 from clinics.cvs import CVS
 from clinics.hyvee import HyVee
 from clinics.walgreens import Walgreens
@@ -13,6 +14,11 @@ redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
 
 
 enabled_clinics = []
+if (
+    "ENABLE_COSENTINOS" in os.environ
+    and os.environ["ENABLE_COSENTINOS"].lower() in TRUE_VALUES
+):
+    enabled_clinics.append(Cosentinos())
 if "ENABLE_CVS" in os.environ and os.environ["ENABLE_CVS"].lower() in TRUE_VALUES:
     enabled_clinics.append(CVS())
 if "ENABLE_HYVEE" in os.environ and os.environ["ENABLE_HYVEE"].lower() in TRUE_VALUES:

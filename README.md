@@ -71,6 +71,7 @@ Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
 - `ENABLE_CVS`: If you want to check CVS pharmacies
+- `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://app.squarespacescheduling.com/schedule.php?owner=21943707&calendarID=5070652) (Kansas City only)
 - Slack:
   - `SLACK_BOT_TOKEN`: Token for your slack integration
   - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
