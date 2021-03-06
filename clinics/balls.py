@@ -42,7 +42,6 @@ class Balls(Clinic):
 
 
 def get_clinic_available(clinic):
-    breakpoint()
     return clinic["enabled"] and len(clinic["available_appointment_dates"]) > 0
 
 
