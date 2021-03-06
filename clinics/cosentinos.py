@@ -12,7 +12,7 @@ from . import Clinic
 class Cosentinos(Clinic):
     def get_locations(self):
         clinic_index_url = "https://www.cosentinos.com/covid-vaccine"
-        clinic_info_regex = r"<strong>(.{10,50})<\/strong><br \/>[\s\S]{1,50}<br \/>\s*(.{1,30}), (\w{2}) (\d{5})<br \/>\s*[\d-]{12}<br(?: \/)?>[\s\S]{1,100}calendarID=(\d{7}).{1,50}Vaccine Availability<\/a>"
+        clinic_info_regex = r"<strong>(.{10,50})<\/strong><br \/>[\s\S]{1,50}<br \/>\s*(.{1,30}), (\w{2}) \d{5}<br \/>\s*[\d-]{12}<br(?: \/)?>[\s\S]{1,100}calendarID=(\d{7}).{1,50}Vaccine Availability<\/a>"
         response = requests.get(clinic_index_url)
 
         clinics_with_vaccine = []
@@ -23,14 +23,13 @@ class Cosentinos(Clinic):
             for clinic in clinics:
                 clinic_data = format_data(
                     {
-                        "clinic_id": clinic[4],
+                        "clinic_id": clinic[3],
                         "name": clinic[0].replace("'", "'"),
                         "city": clinic[1],
                         "state": clinic[2],
-                        "zip": clinic[3],
                     }
                 )
-                if get_availability_for_clinic(clinic[4]):
+                if get_availability_for_clinic(clinic[3]):
                     clinics_with_vaccine.append(clinic_data)
                 else:
                     clinics_without_vaccine.append(clinic_data)
@@ -105,5 +104,4 @@ def format_data(clinic):
         "id": "cosentinos-{}".format(clinic["clinic_id"]),
         "name": "{} {}".format(clinic["name"], clinic["city"]),
         "state": clinic["state"],
-        "zip": clinic["zip"],
     }

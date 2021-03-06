@@ -6,7 +6,7 @@ class Clinic:
     #   "link": link to sign up
     #   "earliest_appointment_day": (string, optional), day of the earliest appointment in human-readable format
     #   "latest_appointment_day": (string, optional), day of the latest appointment in human-readable format
-    #   "zip": zip code of the location
+    #   "zip": (string, optional), zip code of the location
     #   "state": (string, optional), state the location is in, 2 letter abbreviation preferred
     # }
     def get_locations(self):
