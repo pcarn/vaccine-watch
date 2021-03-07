@@ -5,11 +5,9 @@ from constants import TRUE_VALUES
 
 
 def format_available_message(clinics):
-    message = (
-        "Vaccine appointments available at {} clinic{}:".format(
-            "these" if len(clinics) > 1 else "this",
-            "s" if len(clinics) > 1 else "",
-        )
+    message = "Vaccine appointments available at {} clinic{}:".format(
+        "these" if len(clinics) > 1 else "this",
+        "s" if len(clinics) > 1 else "",
     )
     for clinic in clinics:
         if "earliest_appointment_day" in clinic:
@@ -33,11 +31,9 @@ def format_available_message(clinics):
 
 
 def format_unavailable_message(clinics):
-    message = (
-        "Vaccine appointments no longer available at {} clinic{}:".format(
-            "these" if len(clinics) > 1 else "this",
-            "s" if len(clinics) > 1 else "",
-        )
+    message = "Vaccine appointments no longer available at {} clinic{}:".format(
+        "these" if len(clinics) > 1 else "this",
+        "s" if len(clinics) > 1 else "",
     )
     for clinic in clinics:
         message += "\n {}{}".format(
@@ -45,6 +41,7 @@ def format_unavailable_message(clinics):
             clinic["name"],
         )
     return message
+
 
 def notify_console_available_clinics(clinics):
     print("[CONSOLE] {}".format(format_available_message(clinics)))

@@ -27,5 +27,8 @@ def notify_unavailable(clinics):
         notify_slack_unavailable_clinics(clinics)
     if "TWITTER_CONSUMER_KEY" in os.environ:
         notify_twitter_unavailable_clinics(clinics)
-    if "NOTIFY_CONSOLE" in os.environ:
+    if (
+        "NOTIFY_CONSOLE" in os.environ
+        and os.environ["NOTIFY_CONSOLE"].lower() in TRUE_VALUES
+    ):
         notify_console_unavailable_clinics(clinics)
