@@ -9,6 +9,7 @@ from clinics.cvs import CVS
 from clinics.hyvee import HyVee
 from clinics.test_clinic import TestClinic
 from clinics.walgreens import Walgreens
+from clinics.walmart import Walmart
 from constants import TRUE_VALUES
 from notify import notify_available, notify_unavailable
 
@@ -31,6 +32,11 @@ if (
     and os.environ["ENABLE_WALGREENS"].lower() in TRUE_VALUES
 ):
     enabled_clinics.append(Walgreens())
+if (
+    "ENABLE_WALMART" in os.environ
+    and os.environ["ENABLE_WALMART"].lower() in TRUE_VALUES
+):
+    enabled_clinics.append(Walmart())
 if "ENABLE_TEST" in os.environ and os.environ["ENABLE_TEST"].lower() in TRUE_VALUES:
     enabled_clinics.append(TestClinic())
 
