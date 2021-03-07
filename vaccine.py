@@ -6,12 +6,12 @@ import redis
 from clinics.cosentinos import Cosentinos
 from clinics.cvs import CVS
 from clinics.hyvee import HyVee
+from clinics.test_clinic import TestClinic
 from clinics.walgreens import Walgreens
 from constants import TRUE_VALUES
 from notify import notify_available, notify_unavailable
 
 redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
-
 
 enabled_clinics = []
 if (
@@ -28,6 +28,8 @@ if (
     and os.environ["ENABLE_WALGREENS"].lower() in TRUE_VALUES
 ):
     enabled_clinics.append(Walgreens())
+if "ENABLE_TEST" in os.environ and os.environ["ENABLE_TEST"].lower() in TRUE_VALUES:
+    enabled_clinics.append(TestClinic())
 
 # If already notified for a clinic, don't notify again.
 # When a clinic doesn't have vaccines, reset to not notified.

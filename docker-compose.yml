@@ -14,11 +14,15 @@ services:
       - ENABLE_WALGREENS=true
       - ENABLE_CVS=true
       - ENABLE_COSENTINOS=true
+      - ENABLE_BALLS=true
       - RADIUS=20
       - LATITUDE=39.1018061
       - LONGITUDE=-94.5812623
       - ZIP_CODE=64106
       - SLACK_TAG_CHANNEL=false
+      # set these to true to test out a new notifier or new data source
+      #- ENABLE_TEST=true
+      #- NOTIFY_CONSOLE=true
     env_file:
       - .env
   redis:
