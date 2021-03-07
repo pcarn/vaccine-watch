@@ -60,8 +60,8 @@ Required Environment Variables:
 - `REDIS_URL`: A redis service
 - `VACCINE_CHECK_INTERVAL`: How often (in seconds) to check
 - `RADIUS`: Within how many miles to check
-  - Walmart only supports 20 or 25, otherwise they default to 50
-  - CVS has a maximum of 25, vaccine-watch will use 25 for CVS if you set this higher
+  - Walmart only supports 10, 20, 25, 50, or 100. Otherwise they default to 50.
+  - CVS has a maximum of 25, vaccine-watch will use 25 for CVS if you set this higher.
 - `LATITUDE`: Latitude of the location to check (e.g. 39.1040382)
 - `LONGITUDE`: Latitude of the location to check (e.g. -94.5701803)
 - `ZIP_CODE`: Zip Code of the location to check (e.g. 64106)
