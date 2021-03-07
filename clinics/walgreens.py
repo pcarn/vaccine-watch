@@ -26,7 +26,7 @@ class Walgreens(Clinic):
                     "%Y-%m-%d"
                 )
             },
-            "radius": max(20, int(os.environ["RADIUS"])),
+            "radius": max(25, int(os.environ["RADIUS"])),
         }
         response = requests.post(url, headers=headers, json=payload)
 
