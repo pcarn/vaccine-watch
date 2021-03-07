@@ -15,6 +15,11 @@ class Walgreens(Clinic):
             "x-xsrf-token": os.environ["WALGREENS_X_XSRF_TOKEN"],
             "cookie": "XSRF-TOKEN={}".format(os.environ["WALGREENS_XSRF_TOKEN_COOKIE"]),
         }
+
+        radius = int(os.environ["RADIUS"])
+        if radius > 25:
+            radius = 25
+
         payload = {
             "serviceId": "99",
             "position": {
@@ -26,7 +31,7 @@ class Walgreens(Clinic):
                     "%Y-%m-%d"
                 )
             },
-            "radius": max(25, int(os.environ["RADIUS"])),
+            "radius": radius,
         }
         response = requests.post(url, headers=headers, json=payload)
 
