@@ -47,15 +47,12 @@ class TestClinic(Clinic):
         first_set = [ self.clinicA, self.clinicC]
         second_set = [self.clinicB, self.clinicD]
 
-        clinics_with_vaccine = []
-        clinics_without_vaccine = []
-
         if self.flip:
-            clinics_with_vaccine.extend(first_set)
-            clinics_without_vaccine.extend(second_set)
+            clinics_with_vaccine = first_set
+            clinics_without_vaccine = second_set
         else:
-            clinics_without_vaccine.extend(first_set)
-            clinics_with_vaccine.extend(second_set)
+            clinics_without_vaccine = first_set
+            clinics_with_vaccine = second_set
 
         ret_dic =  {
             "with_vaccine": clinics_with_vaccine,
