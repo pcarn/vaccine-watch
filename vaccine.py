@@ -3,6 +3,7 @@ import os
 
 import redis
 
+from clinics.balls import Balls
 from clinics.cosentinos import Cosentinos
 from clinics.cvs import CVS
 from clinics.hyvee import HyVee
@@ -14,6 +15,8 @@ from notify import notify_available, notify_unavailable
 redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
 
 enabled_clinics = []
+if "ENABLE_BALLS" in os.environ and os.environ["ENABLE_BALLS"].lower() in TRUE_VALUES:
+    enabled_clinics.append(Balls())
 if (
     "ENABLE_COSENTINOS" in os.environ
     and os.environ["ENABLE_COSENTINOS"].lower() in TRUE_VALUES

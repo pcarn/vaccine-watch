@@ -33,7 +33,7 @@ class Walgreens(Clinic):
         generic_walgreens = {
             "id": "walgreens",
             "name": "Walgreens",
-            "link": "https://www.walgreens.com/findcare/vaccination/covid-19/location-screening",
+            "link": "https://www.walgreens.com/findcare/vaccination/covid-19/",
             "zip": os.environ["ZIP_CODE"],
         }
 
