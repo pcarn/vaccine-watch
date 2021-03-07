@@ -24,3 +24,12 @@ services:
       - .env
   redis:
     image: "redis:alpine"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  redis_data:
+    driver: local
