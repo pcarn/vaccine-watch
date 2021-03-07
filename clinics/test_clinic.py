@@ -6,7 +6,7 @@ class TestClinic(Clinic):
     clinic_a = {
         "link": "https://testclinics.fake/signup/clinic-a",
         "id": "clinic-a",
-        "name": "A Clinic",
+        "name": "Test ClinicA",
         "state": "CA",
         "zip": "90210",
         "earliest_appointment_day": "February 1 2021",
@@ -15,8 +15,8 @@ class TestClinic(Clinic):
 
     clinic_b = {
         "link": "https://testclinics.fake/signup/clinic-b",
-        "id": "cosentinos-B",
-        "name": "B Clinic",
+        "id": "clinic-B",
+        "name": "Test ClinicB",
         "state": "CA",
         "zip": "90211",
         "earliest_appointment_day": "February 2 2021",
@@ -26,17 +26,17 @@ class TestClinic(Clinic):
     clinic_c = {
         "link": "https://testclinics.fake/signup/clinic-c",
         "id": "clinic-c",
-        "name": "C Clinic",
+        "name": "Test ClinicC",
         "state": "CA",
         "zip": "90210",
         "earliest_appointment_day": "March 2 2021 9AM",
         "latest_appointment_day": "March 2 2021 1115AM",
     }
 
-    clinicD = {
+    clinic_d = {
         "link": "https://testclinics.fake/signup/clinic-d",
-        "id": "cosentinos-d",
-        "name": "D Clinic",
+        "id": "clinic-d",
+        "name": "Test ClinicD",
         "state": "CA",
         "zip": "90211",
         "earliest_appointment_day": "March 3 2021 10AM",
@@ -47,14 +47,16 @@ class TestClinic(Clinic):
 
     def get_locations(self):
         first_set = [self.clinic_a, self.clinic_c]
-        second_set = [self.clinic_b, self.clinicD]
+        second_set = [self.clinic_b, self.clinic_d]
+
+        clinics_with_vaccine = first_set
+        clinics_without_vaccine = second_set
 
         if self.flip:
-            clinics_with_vaccine = first_set
-            clinics_without_vaccine = second_set
-        else:
-            clinics_without_vaccine = first_set
-            clinics_with_vaccine = second_set
+            clinics_with_vaccine, clinics_without_vaccine = (
+                clinics_without_vaccine,
+                clinics_with_vaccine,
+            )
 
         ret_dic = {
             "with_vaccine": clinics_with_vaccine,
