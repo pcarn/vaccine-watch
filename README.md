@@ -7,7 +7,9 @@ Notifications are sent when a location has appointments. No more notifications a
 
 PRs welcome to support other clinics or notification methods.
 
-This project has no affiliation with Hy-Vee.
+This project has no affiliation with any of the clinics mentioned.
+
+Walmart data courtesy of [covid-vaccine-spotter](https://github.com/GUI/covid-vaccine-spotter).
 
 ## Example
 Slack
@@ -53,11 +55,6 @@ Twitter
 Lint is run as a pre-commit, or on-demand with `pre-commit run --all-files`
 
 ## Deployment Instructions
-### Docker
-You can build a docker image with the Dockerfile, and run it with a redis server.
-
-### Heroku
-You can create an app in heroku, add a free redis plan, and push the source. Configure the dynos to enable `clock`.
 
 Required Environment Variables:
 - `REDIS_URL`: A redis service
@@ -70,6 +67,7 @@ Required Environment Variables:
 Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
+- `ENABLE_WALMART`: If you want to check Walmart pharmacies
 - `ENABLE_CVS`: If you want to check CVS pharmacies
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
@@ -79,3 +77,9 @@ Optional Environment Variables:
   - `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
 - Twitter:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
+
+### Docker
+You can build a docker image with the Dockerfile, and run it with a redis server.
+
+### Heroku
+You can create an app in heroku, add a free redis plan, and push the source. Configure the dynos to enable `clock`.
