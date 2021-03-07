@@ -29,7 +29,7 @@ class CVS(Clinic):
             },
             "requestPayloadData": {
                 "selectedImmunization": ["CVD"],
-                "distanceInMiles": int(os.environ["RADIUS"]),
+                "distanceInMiles": os.environ["RADIUS"],
                 "imzData": [{"imzType": "CVD", "allocationType": "1"}],
                 "searchCriteria": {"addressLine": os.environ["ZIP_CODE"]},
             },
