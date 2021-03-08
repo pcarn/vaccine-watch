@@ -70,7 +70,13 @@ Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
 - `ENABLE_WALMART`: If you want to check Walmart pharmacies
-- `ENABLE_CVS`: If you want to check CVS pharmacies
+- CVS:
+  - `ENABLE_CVS`: If you want to check CVS pharmacies
+  - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for. Only states in this list will be checked.
+    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
+  - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
+    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
+  Any city that CVS returns for the state not in either of those two lists will log a warning to add it to one.
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - Slack:
