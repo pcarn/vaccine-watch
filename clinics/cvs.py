@@ -59,7 +59,7 @@ class CVS(Clinic):
             )
 
         return {
-            "without__vaccine": locations_with_vaccine,
+            "with_vaccine": locations_with_vaccine,
             "without_vaccine": locations_without_vaccine,
         }
 
