@@ -76,7 +76,7 @@ Optional Environment Variables:
     - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
   - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
     - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
-  Any city that CVS returns for the state not in either of those two lists will log a warning to add it to one.
+  - Any city that CVS returns for the state(s) in the allow list that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - Slack:
