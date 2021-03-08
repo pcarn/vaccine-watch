@@ -1,8 +1,10 @@
 import logging
 import os
+from datetime import datetime
 
 import redis
 import twitter
+from pytz import timezone
 
 from .utils import shorten_url
 
@@ -27,8 +29,6 @@ class Twitter:
 
 client = Twitter()
 
-emojis = [None, "😷", "💉", "😷💉", "💉😷"]
-
 
 def format_available_message(clinic, retry_attempt):
     if "earliest_appointment_day" in clinic:
@@ -47,7 +47,9 @@ def format_available_message(clinic, retry_attempt):
         day_string,
         ", zip code {}".format(clinic["zip"]) if "zip" in clinic else "",
         shorten_url(clinic["link"]),
-        " {}".format(emojis[retry_attempt]) if retry_attempt > 0 else "",
+        " ({})".format(datetime.now(timezone("US/Central")).strftime("%I:%M"))
+        if retry_attempt
+        else "",
     )
 
 
@@ -55,13 +57,13 @@ def format_unavailable_message(clinic):
     return "Vaccine appointments no longer available at {}.".format(clinic["name"])
 
 
-def notify_clinic_available(clinic, retry_attempt=0):
+def notify_clinic_available(clinic, retry_attempt=False):
     try:
         response = client.post_tweet(format_available_message(clinic, retry_attempt))
         redis_client.set("tweet-{}".format(clinic["id"]), response.id)
     except twitter.error.TwitterError as exception:
-        if retry_attempt < 4 and exception.message[0]["code"] == 170:  # Duplicate Tweet
-            notify_clinic_available(clinic, retry_attempt=(retry_attempt + 1))
+        if not retry_attempt and exception.message[0]["code"] == 170:  # Duplicate Tweet
+            notify_clinic_available(clinic, retry_attempt=True)
         else:
             logging.exception("Error when posting tweet")
 
