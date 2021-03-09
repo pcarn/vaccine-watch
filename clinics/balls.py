@@ -12,62 +12,64 @@ from . import Clinic
 
 class Balls(Clinic):
     def get_locations(self):
-        clinics_with_vaccine = []
-        clinics_without_vaccine = []
+        locations_with_vaccine = []
+        locations_without_vaccine = []
 
         location_data = get_all_location_data()
 
-        clinics_with_vaccine = [
-            clinic for clinic in location_data if get_clinic_available(clinic)
+        locations_with_vaccine = [
+            location for location in location_data if get_location_available(location)
         ]
-        clinics_without_vaccine = [
-            clinic for clinic in location_data if not get_clinic_available(clinic)
+        locations_without_vaccine = [
+            location
+            for location in location_data
+            if not get_location_available(location)
         ]
 
-        for clinic in clinics_with_vaccine:
-            appointment_dates = clinic["available_appointment_dates"]
+        for location in locations_with_vaccine:
+            appointment_dates = location["available_appointment_dates"]
             appointment_dates.sort()
             if len(appointment_dates) > 0:
-                clinic["earliest_appointment_day"] = appointment_dates[0].strftime(
+                location["earliest_appointment_day"] = appointment_dates[0].strftime(
                     "%b %-d"
                 )
-                clinic["latest_appointment_day"] = appointment_dates[-1].strftime(
+                location["latest_appointment_day"] = appointment_dates[-1].strftime(
                     "%b %-d"
                 )
 
         return {
-            "with_vaccine": clinics_with_vaccine,
-            "without_vaccine": clinics_without_vaccine,
+            "with_vaccine": locations_with_vaccine,
+            "without_vaccine": locations_without_vaccine,
         }
 
 
-def get_clinic_available(clinic):
-    return clinic["enabled"] and len(clinic["available_appointment_dates"]) > 0
+def get_location_available(location):
+    return location["enabled"] and len(location["available_appointment_dates"]) > 0
 
 
 def get_all_location_data():
-    clinic_index_url = "https://ballsfoodspharmacy.com"
-    clinic_info_regex = '<option value="https:\/\/hipaa.jotform\.com\/(\d{10,20})">(.{1,100}) - .{1,100} - (.{1,100}), (\w{2}) \d{5}<\/option>'
-    response = requests.get(clinic_index_url)
+    location_index_url = "https://ballsfoodspharmacy.com"
+    location_info_regex = '<option value="https:\/\/hipaa.jotform\.com\/(\d{10,20})">(.{1,100}) - .{1,100} - (.{1,100}), (\w{2}) \d{5}<\/option>'
+    response = requests.get(location_index_url)
     if response.status_code == 200:
-        clinics = re.findall(clinic_info_regex, response.text)
+        locations = re.findall(location_info_regex, response.text)
         page_data = BeautifulSoup(response.text, "html.parser")
         enabled_options = page_data.find_all("option")
 
         return [
             {
-                "id": "balls-{}".format(clinic[0]),
-                "name": "{} {}".format(clinic[1], clinic[2]),
-                "state": clinic[3],
+                "id": "balls-{}".format(location[0]),
+                "name": "{} {}".format(location[1], location[2]),
+                "state": location[3],
                 "enabled": any(
-                    [clinic[0] in str(option) for option in enabled_options]
+                    [location[0] in str(option) for option in enabled_options]
                 ),
-                "link": "https://hipaa.jotform.com/{}".format(clinic[0]),
+                "link": "https://hipaa.jotform.com/{}".format(location[0]),
                 "available_appointment_dates": get_available_appointment_dates(
-                    clinic[0]
+                    location[0]
                 ),
             }
-            for clinic in clinics
+            for location in locations
         ]
 
     else:

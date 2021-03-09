@@ -4,48 +4,52 @@ import os
 from constants import TRUE_VALUES
 
 
-def format_available_message(clinics):
-    message = "Vaccine appointments available at {} clinic{}:".format(
-        "these" if len(clinics) > 1 else "this",
-        "s" if len(clinics) > 1 else "",
+def format_available_message(locations):
+    message = "Vaccine appointments available at {} location{}:".format(
+        "these" if len(locations) > 1 else "this",
+        "s" if len(locations) > 1 else "",
     )
-    for clinic in clinics:
-        if "earliest_appointment_day" in clinic:
-            if clinic["earliest_appointment_day"] == clinic["latest_appointment_day"]:
-                day_string = "\ton {}".format(clinic["earliest_appointment_day"])
+    for location in locations:
+        if "earliest_appointment_day" in location:
+            if (
+                location["earliest_appointment_day"]
+                == location["latest_appointment_day"]
+            ):
+                day_string = "\ton {}".format(location["earliest_appointment_day"])
             else:
                 day_string = " from [{}] to [{}]".format(
-                    clinic["earliest_appointment_day"], clinic["latest_appointment_day"]
+                    location["earliest_appointment_day"],
+                    location["latest_appointment_day"],
                 )
         else:
             day_string = ""
 
         message += "\n {}{}{}.\n\tSign up at {}\n\t{}".format(
-            "[{}]: ".format(clinic["state"]) if "state" in clinic else "",
-            clinic["name"],
+            "[{}]: ".format(location["state"]) if "state" in location else "",
+            location["name"],
             day_string,
-            clinic["link"],
-            "Zip: {}".format(clinic["zip"]) if "zip" in clinic else "",
+            location["link"],
+            "Zip: {}".format(location["zip"]) if "zip" in location else "",
         )
     return message
 
 
-def format_unavailable_message(clinics):
-    message = "Vaccine appointments no longer available at {} clinic{}:".format(
-        "these" if len(clinics) > 1 else "this",
-        "s" if len(clinics) > 1 else "",
+def format_unavailable_message(locations):
+    message = "Vaccine appointments no longer available at {} location{}:".format(
+        "these" if len(locations) > 1 else "this",
+        "s" if len(locations) > 1 else "",
     )
-    for clinic in clinics:
+    for location in locations:
         message += "\n {}{}".format(
-            "[{}]: ".format(clinic["state"]) if "state" in clinic else "",
-            clinic["name"],
+            "[{}]: ".format(location["state"]) if "state" in location else "",
+            location["name"],
         )
     return message
 
 
-def notify_console_available_clinics(clinics):
-    print("[CONSOLE] {}".format(format_available_message(clinics)))
+def notify_console_available_locations(locations):
+    print("[CONSOLE] {}".format(format_available_message(locations)))
 
 
-def notify_console_unavailable_clinics(clinics):
-    print("[CONSOLE] {}".format(format_unavailable_message(clinics)))
+def notify_console_unavailable_locations(locations):
+    print("[CONSOLE] {}".format(format_unavailable_message(locations)))

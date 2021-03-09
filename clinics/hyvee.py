@@ -25,25 +25,25 @@ class HyVee(Clinic):
         response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
         if response.status_code == 200:
-            clinics = response.json()["data"]["searchPharmaciesNearPoint"]
-            if isinstance(clinics, list):
-                clinics_with_vaccine = [
+            locations = response.json()["data"]["searchPharmaciesNearPoint"]
+            if isinstance(locations, list):
+                locations_with_vaccine = [
                     {
-                        **format_data(clinic),
-                        **get_appointment_info(clinic["location"]["locationId"]),
+                        **format_data(location),
+                        **get_appointment_info(location["location"]["locationId"]),
                     }
-                    for clinic in clinics
-                    if clinic["location"]["isCovidVaccineAvailable"] is True
+                    for location in locations
+                    if location["location"]["isCovidVaccineAvailable"] is True
                 ]
-                clinics_without_vaccine = [
-                    format_data(clinic)
-                    for clinic in clinics
-                    if clinic["location"]["isCovidVaccineAvailable"] is False
+                locations_without_vaccine = [
+                    format_data(location)
+                    for location in locations
+                    if location["location"]["isCovidVaccineAvailable"] is False
                 ]
             else:
                 logging.warning("Bad response from Hy-Vee, no list in response")
-                clinics_with_vaccine = []
-                clinics_without_vaccine = []
+                locations_with_vaccine = []
+                locations_without_vaccine = []
 
         else:
             logging.error(
@@ -51,12 +51,12 @@ class HyVee(Clinic):
                     response.status_code, response.text
                 )
             )
-            clinics_with_vaccine = []
-            clinics_without_vaccine = []
+            locations_with_vaccine = []
+            locations_without_vaccine = []
 
         return {
-            "with_vaccine": clinics_with_vaccine,
-            "without_vaccine": clinics_without_vaccine,
+            "with_vaccine": locations_with_vaccine,
+            "without_vaccine": locations_without_vaccine,
         }
 
 
@@ -142,11 +142,11 @@ def get_appointment_info(location_id):
         return {}
 
 
-def format_data(clinic):
+def format_data(location):
     return {
         "link": "https://www.hy-vee.com/my-pharmacy/covid-vaccine-consent",
-        "id": "hyvee-{}".format(clinic["location"]["locationId"]),
-        "name": "Hy-Vee {}".format(clinic["location"]["name"]),
-        "state": clinic["location"]["address"]["state"],
-        "zip": clinic["location"]["address"]["zip"],
+        "id": "hyvee-{}".format(location["location"]["locationId"]),
+        "name": "Hy-Vee {}".format(location["location"]["name"]),
+        "state": location["location"]["address"]["state"],
+        "zip": location["location"]["address"]["zip"],
     }

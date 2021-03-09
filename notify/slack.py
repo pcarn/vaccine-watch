@@ -7,53 +7,51 @@ from slack_sdk.errors import SlackApiError
 from constants import TRUE_VALUES
 
 
-def format_available_message(clinics):
-    message = (
-        ":large_green_circle: {}Vaccine appointments available at {} clinic{}:".format(
-            "<!channel> "
-            if os.environ["SLACK_TAG_CHANNEL"].lower() in TRUE_VALUES
-            else "",
-            "these" if len(clinics) > 1 else "this",
-            "s" if len(clinics) > 1 else "",
-        )
+def format_available_message(locations):
+    message = ":large_green_circle: {}Vaccine appointments available at {} location{}:".format(
+        "<!channel> " if os.environ["SLACK_TAG_CHANNEL"].lower() in TRUE_VALUES else "",
+        "these" if len(locations) > 1 else "this",
+        "s" if len(locations) > 1 else "",
     )
-    for clinic in clinics:
-        if "earliest_appointment_day" in clinic:
-            if clinic["earliest_appointment_day"] == clinic["latest_appointment_day"]:
-                day_string = " on *{}*".format(clinic["earliest_appointment_day"])
+    for location in locations:
+        if "earliest_appointment_day" in location:
+            if (
+                location["earliest_appointment_day"]
+                == location["latest_appointment_day"]
+            ):
+                day_string = " on *{}*".format(location["earliest_appointment_day"])
             else:
                 day_string = " from *{}* to *{}*".format(
-                    clinic["earliest_appointment_day"], clinic["latest_appointment_day"]
+                    location["earliest_appointment_day"],
+                    location["latest_appointment_day"],
                 )
         else:
             day_string = ""
 
         message += "\n• {}{}{}. Sign up <{}|here>{}{}".format(
-            "*{}*: ".format(clinic["state"]) if "state" in clinic else "",
-            clinic["name"],
+            "*{}*: ".format(location["state"]) if "state" in location else "",
+            location["name"],
             day_string,
-            clinic["link"],
-            ", zip code {}".format(clinic["zip"]) if "zip" in clinic else "",
-            " (as of {})".format(clinic["appointments_last_fetched"])
-            if clinic.get("appointments_last_fetched", None)
+            location["link"],
+            ", zip code {}".format(location["zip"]) if "zip" in location else "",
+            " (as of {})".format(location["appointments_last_fetched"])
+            if location.get("appointments_last_fetched", None)
             else "",
         )
     return message
 
 
-def format_unavailable_message(clinics):
-    message = (
-        ":red_circle: Vaccine appointments no longer available at {} clinic{}:".format(
-            "these" if len(clinics) > 1 else "this",
-            "s" if len(clinics) > 1 else "",
-        )
+def format_unavailable_message(locations):
+    message = ":red_circle: Vaccine appointments no longer available at {} location{}:".format(
+        "these" if len(locations) > 1 else "this",
+        "s" if len(locations) > 1 else "",
     )
-    for clinic in clinics:
+    for location in locations:
         message += "\n• {}{}{}".format(
-            "*{}*: ".format(clinic["state"]) if "state" in clinic else "",
-            clinic["name"],
-            " (as of {})".format(clinic["appointments_last_fetched"])
-            if clinic.get("appointments_last_fetched", None)
+            "*{}*: ".format(location["state"]) if "state" in location else "",
+            location["name"],
+            " (as of {})".format(location["appointments_last_fetched"])
+            if location.get("appointments_last_fetched", None)
             else "",
         )
     return message
@@ -69,9 +67,9 @@ def send_message_to_slack(message):
         logging.exception("Failed to send message to slack")
 
 
-def notify_slack_available_clinics(clinics):
-    send_message_to_slack(format_available_message(clinics))
+def notify_slack_available_locations(locations):
+    send_message_to_slack(format_available_message(locations))
 
 
-def notify_slack_unavailable_clinics(clinics):
-    send_message_to_slack(format_unavailable_message(clinics))
+def notify_slack_unavailable_locations(locations):
+    send_message_to_slack(format_unavailable_message(locations))

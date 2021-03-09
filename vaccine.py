@@ -40,39 +40,39 @@ if (
 if "ENABLE_TEST" in os.environ and os.environ["ENABLE_TEST"].lower() in TRUE_VALUES:
     enabled_clinics.append(TestClinic())
 
-# If already notified for a clinic, don't notify again.
-# When a clinic doesn't have vaccines, reset to not notified.
+# If already notified for a location, don't notify again.
+# When a location doesn't have vaccines, reset to not notified.
 def check_for_appointments():
-    available_clinics = []
-    unavailable_clinics = []
-    newly_available_clinics = []
-    newly_unavailable_clinics = []
+    available_locations = []
+    unavailable_locations = []
+    newly_available_locations = []
+    newly_unavailable_locations = []
 
     for clinic in enabled_clinics:
         response = clinic.get_locations()
-        available_clinics += response["with_vaccine"]
-        unavailable_clinics += response["without_vaccine"]
+        available_locations += response["with_vaccine"]
+        unavailable_locations += response["without_vaccine"]
 
-    for clinic in available_clinics:
-        if redis_client.get(clinic["id"]) is None:
-            newly_available_clinics.append(clinic)
-            redis_client.set(clinic["id"], "notified")
+    for location in available_locations:
+        if redis_client.get(location["id"]) is None:
+            newly_available_locations.append(location)
+            redis_client.set(location["id"], "notified")
 
-    for clinic in unavailable_clinics:
-        deleted = redis_client.delete(clinic["id"])
+    for location in unavailable_locations:
+        deleted = redis_client.delete(location["id"])
         if deleted == 1:
-            newly_unavailable_clinics.append(clinic)
+            newly_unavailable_locations.append(location)
 
-    if len(newly_available_clinics) > 0:
-        notify_available(newly_available_clinics)
-        print("{} newly available clinics".format(len(newly_available_clinics)))
+    if len(newly_available_locations) > 0:
+        notify_available(newly_available_locations)
+        print("{} newly available locations".format(len(newly_available_locations)))
 
-    if len(newly_unavailable_clinics) > 0:
-        notify_unavailable(newly_unavailable_clinics)
-        print("{} newly unavailable clinics".format(len(newly_unavailable_clinics)))
+    if len(newly_unavailable_locations) > 0:
+        notify_unavailable(newly_unavailable_locations)
+        print("{} newly unavailable locations".format(len(newly_unavailable_locations)))
 
-    if len(newly_available_clinics) == 0 and len(newly_unavailable_clinics) == 0:
+    if len(newly_available_locations) == 0 and len(newly_unavailable_locations) == 0:
         print("nothing to notify")
 
-    for clinic in newly_unavailable_clinics:
-        redis_client.delete("tweet-{}".format(clinic["id"]))
+    for location in newly_unavailable_locations:
+        redis_client.delete("tweet-{}".format(location["id"]))
