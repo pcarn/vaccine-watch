@@ -41,18 +41,26 @@ def format_available_message(clinic, retry_attempt):
     else:
         day_string = ""
 
-    return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}".format(
+    return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}{}".format(
         "{}: ".format(clinic["state"]) if "state" in clinic else "",
         clinic["name"],
         day_string,
         ", zip code {}".format(clinic["zip"]) if "zip" in clinic else "",
         shorten_url(clinic["link"]),
+        " (as of {})".format(clinic["appointments_last_fetched"])
+        if clinic.get("appointments_last_fetched", None)
+        else "",
         " {}".format(emojis[retry_attempt]) if retry_attempt > 0 else "",
     )
 
 
 def format_unavailable_message(clinic):
-    return "Vaccine appointments no longer available at {}.".format(clinic["name"])
+    return "Vaccine appointments no longer available at {}{}.".format(
+        clinic["name"],
+        " (as of {})".format(clinic["appointments_last_fetched"])
+        if clinic.get("appointments_last_fetched", None)
+        else "",
+    )
 
 
 def notify_clinic_available(clinic, retry_attempt=0):

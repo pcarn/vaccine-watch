@@ -10,6 +10,7 @@ from . import Clinic
 
 class Walgreens(Clinic):
     def get_locations(self):
+        zone = os.environ.get("TIMEZONE", "US/Central")
         url = "https://www.walgreens.com/hcschedulersvc/svc/v1/immunizationLocations/availability"
         headers = {
             "x-xsrf-token": os.environ["WALGREENS_X_XSRF_TOKEN"],
@@ -22,9 +23,7 @@ class Walgreens(Clinic):
                 "longitude": float(os.environ["LONGITUDE"]),
             },
             "appointmentAvailability": {
-                "startDateTime": datetime.now(timezone("US/Central")).strftime(
-                    "%Y-%m-%d"
-                )
+                "startDateTime": datetime.now(timezone(zone)).strftime("%Y-%m-%d")
             },
             "radius": min(25, int(os.environ["RADIUS"])),
         }

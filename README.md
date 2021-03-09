@@ -70,6 +70,8 @@ Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
 - `ENABLE_WALMART`: If you want to check Walmart pharmacies
+- `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
+- `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - CVS:
   - `ENABLE_CVS`: If you want to check CVS pharmacies
   - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for.
@@ -77,14 +79,13 @@ Optional Environment Variables:
   - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
     - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
   - Any city that CVS returns for the state(s) in `STATES` that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
-- `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
-- `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - Slack:
   - `SLACK_BOT_TOKEN`: Token for your slack integration
   - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
   - `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
 - Twitter:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
+- `TIMEZONE`: Timezone of your location (defaults to `'US/Central'`)
 
 ### Docker
 You can build a docker image with the Dockerfile, and run it with a redis server.
