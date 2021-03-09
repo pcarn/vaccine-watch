@@ -21,15 +21,16 @@ class Cosentinos(Clinic):
         if response.status_code == 200:
             locations = re.findall(location_info_regex, response.text)
             for location in locations:
+                name, city, state, location_id = location
                 location_data = format_data(
                     {
-                        "location_id": location[3],
-                        "name": location[0].replace("'", "'"),
-                        "city": location[1],
-                        "state": location[2],
+                        "location_id": location_id,
+                        "name": name.replace("'", "'"),
+                        "city": city,
+                        "state": state,
                     }
                 )
-                if get_availability_for_location(location[3]):
+                if get_availability_for_location(location_id):
                     locations_with_vaccine.append(location_data)
                 else:
                     locations_without_vaccine.append(location_data)

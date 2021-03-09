@@ -15,8 +15,9 @@ class Walmart(VaccineSpotterClinic):
 
     def should_include_location(self, location):
         coordinates = location["geometry"]["coordinates"]
+        longitude, latitude = coordinates
         return location["properties"]["provider_brand"] == "walmart" and distance(
-            self.here, (coordinates[1], coordinates[0])
+            self.here, (latitude, longitude)
         ).miles < int(os.environ["RADIUS"])
 
     def format_data(self, location):
