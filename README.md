@@ -60,11 +60,11 @@ Required Environment Variables:
 - `REDIS_URL`: A redis service
 - `VACCINE_CHECK_INTERVAL`: How often (in seconds) to check
 - `RADIUS`: Within how many miles to check
-  - Walmart only supports 10, 20, 25, 50, or 100. Otherwise they default to 50.
   - CVS has a maximum of 25, vaccine-watch will use 25 for CVS if you set this higher.
-- `LATITUDE`: Latitude of the location to check (e.g. 39.1040382)
-- `LONGITUDE`: Latitude of the location to check (e.g. -94.5701803)
-- `ZIP_CODE`: Zip Code of the location to check (e.g. 64106)
+- `LATITUDE`: Latitude of the location to check (e.g. `39.1040382`)
+- `LONGITUDE`: Latitude of the location to check (e.g. `-94.5701803`)
+- `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
+- `ZIP_CODE`: Zip Code of the location to check (e.g. `64106`)
 
 Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
@@ -72,11 +72,11 @@ Optional Environment Variables:
 - `ENABLE_WALMART`: If you want to check Walmart pharmacies
 - CVS:
   - `ENABLE_CVS`: If you want to check CVS pharmacies
-  - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for. Only states in this list will be checked.
+  - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for.
     - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
   - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
     - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
-  - Any city that CVS returns for the state(s) in the allow list that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
+  - Any city that CVS returns for the state(s) in `STATES` that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - Slack:

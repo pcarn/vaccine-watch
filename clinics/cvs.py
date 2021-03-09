@@ -12,6 +12,7 @@ class CVS(Clinic):
     def __init__(self):
         self.allow_list = json.loads(os.environ["CVS_ALLOW_LIST"])
         self.block_list = json.loads(os.environ.get("CVS_BLOCK_LIST", "{}"))
+        self.states = json.loads(os.environ["STATES"])
 
     def get_locations(self):
         url = "https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.json?vaccineinfo"
@@ -22,7 +23,7 @@ class CVS(Clinic):
 
         if response.status_code == 200:
             data = response.json()["responsePayloadData"]["data"]
-            for state in self.allow_list.keys():
+            for state in self.states:
                 try:
                     locations = data[state]
                 except KeyError:
@@ -45,7 +46,7 @@ class CVS(Clinic):
                         state not in self.block_list
                         or location["city"] not in self.block_list[state]
                     ):
-                        logging.warn(
+                        logging.warning(
                             "New city found for CVS: {}, {}. Add to allow list or block list.".format(
                                 location["city"], state
                             )
