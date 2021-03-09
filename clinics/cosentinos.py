@@ -90,7 +90,7 @@ def get_page(clinic_id, offset):
     else:
         logging.error(
             "Bad Response from Cosentino's Squarespace: {} {}".format(
-                response.statusCode, response.text
+                response.status_code, response.text
             )
         )
         return ""

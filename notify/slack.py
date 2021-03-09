@@ -28,12 +28,15 @@ def format_available_message(clinics):
         else:
             day_string = ""
 
-        message += "\n• {}{}{}. Sign up <{}|here>{}".format(
+        message += "\n• {}{}{}. Sign up <{}|here>{}{}".format(
             "*{}*: ".format(clinic["state"]) if "state" in clinic else "",
             clinic["name"],
             day_string,
             clinic["link"],
             ", zip code {}".format(clinic["zip"]) if "zip" in clinic else "",
+            " (as of {})".format(clinic["appointments_last_fetched"])
+            if clinic.get("appointments_last_fetched", None)
+            else "",
         )
     return message
 
@@ -46,9 +49,12 @@ def format_unavailable_message(clinics):
         )
     )
     for clinic in clinics:
-        message += "\n• {}{}".format(
+        message += "\n• {}{}{}".format(
             "*{}*: ".format(clinic["state"]) if "state" in clinic else "",
             clinic["name"],
+            " (as of {})".format(clinic["appointments_last_fetched"])
+            if clinic.get("appointments_last_fetched", None)
+            else "",
         )
     return message
 

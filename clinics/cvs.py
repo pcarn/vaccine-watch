@@ -1,61 +1,56 @@
+import json
 import logging
 import os
-from datetime import datetime
 
 import requests
 
 from . import Clinic
 
 
+# Not using VaccineSpotter so that we get more frequent updates
 class CVS(Clinic):
-    def get_locations(self):
-        url = "https://www.cvs.com/Services/ICEAGPV1/immunization/1.0.0/getIMZStores"
-        headers = {
-            "content-type": "application/json",
-            "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.192 Safari/537.36",
-        }
-        payload = {
-            "requestMetaData": {
-                "appName": "CVS_WEB",
-                "lineOfBusiness": "RETAIL",
-                "channelName": "WEB",
-                "deviceType": "DESKTOP",
-                "deviceToken": "7777",
-                "apiKey": "a2ff75c6-2da7-4299-929d-d670d827ab4a",
-                "source": "ICE_WEB",
-                "securityType": "apiKey",
-                "responseFormat": "JSON",
-                "type": "cn-dep",
-            },
-            "requestPayloadData": {
-                "selectedImmunization": ["CVD"],
-                "distanceInMiles": int(os.environ["RADIUS"]),
-                "imzData": [{"imzType": "CVD", "allocationType": "1"}],
-                "searchCriteria": {"addressLine": os.environ["ZIP_CODE"]},
-            },
-        }
-        response = requests.post(url, headers=headers, json=payload)
+    def __init__(self):
+        self.allow_list = json.loads(os.environ["CVS_ALLOW_LIST"])
+        self.block_list = json.loads(os.environ.get("CVS_BLOCK_LIST", "{}"))
+        self.states = json.loads(os.environ["STATES"])
 
-        generic_cvs = {
-            "id": "cvs",
-            "name": "CVS",
-            "link": "https://www.cvs.com/vaccine/intake/store/cvd-schedule?icid=coronavirus-lp-vaccine-mo-statetool",
-            "zip": os.environ["ZIP_CODE"],
-        }
+    def get_locations(self):
+        url = "https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.json?vaccineinfo"
+        response = requests.get(url)
+
+        locations_with_vaccine = []
+        locations_without_vaccine = []
 
         if response.status_code == 200:
-            data = response.json()
-            if data["responseMetaData"]["statusCode"] == "0000":
-                appointment_dates = data["responsePayloadData"]["availableDates"]
-                appointment_dates.sort()
+            data = response.json()["responsePayloadData"]["data"]
+            for state in self.states:
+                try:
+                    locations = data[state]
+                except KeyError:
+                    logging.info("State not included in CVS data yet")
+                    continue
 
-                clinics_with_vaccine = [
-                    {**generic_cvs, **get_available_date_info(appointment_dates)}
-                ]
-                clinics_without_vaccine = []
-            else:
-                clinics_with_vaccine = []
-                clinics_without_vaccine = [generic_cvs]
+                for location in locations:
+                    if location["city"] in self.allow_list[state]:
+                        if location["status"] == "Available":
+                            locations_with_vaccine.append(format_data(location))
+                        elif location["status"] == "Fully Booked":
+                            locations_without_vaccine.append(format_data(location))
+                        else:
+                            logging.error(
+                                "Unknown location status from CVS: {}".format(
+                                    location["status"]
+                                )
+                            )
+                    elif (
+                        state not in self.block_list
+                        or location["city"] not in self.block_list[state]
+                    ):
+                        logging.warning(
+                            "New city found for CVS: {}, {}. Add to allow list or block list.".format(
+                                location["city"], state
+                            )
+                        )
 
         else:
             logging.error(
@@ -63,22 +58,21 @@ class CVS(Clinic):
                     response.status_code, response.text
                 )
             )
-            clinics_with_vaccine = []
-            clinics_without_vaccine = []
 
         return {
-            "with_vaccine": clinics_with_vaccine,
-            "without_vaccine": clinics_without_vaccine,
+            "with_vaccine": locations_with_vaccine,
+            "without_vaccine": locations_without_vaccine,
         }
 
 
-def timestamp_to_date(timestamp):
-    return datetime.strptime(timestamp, "%Y-%m-%d")
-
-
-# Takes a list of strings in date format "YYYY-MM-DD"
-def get_available_date_info(dates):
+def format_data(location):
     return {
-        "earliest_appointment_day": timestamp_to_date(dates[0]).strftime("%b %-d"),
-        "latest_appointment_day": timestamp_to_date(dates[-1]).strftime("%b %-d"),
+        "id": "cvs-{}-{}".format(location["state"], location["city"]),
+        "state": location["state"],
+        "name": "CVS {}".format(
+            " ".join([city.capitalize() for city in location["city"].split(" ")])
+        ),
+        "link": "https://www.cvs.com/vaccine/intake/store/cvd-schedule.html?icid=coronavirus-lp-vaccine-{}-statetool".format(
+            location["state"].lower()
+        ),
     }
