@@ -64,7 +64,6 @@ Required Environment Variables:
 - `LATITUDE`: Latitude of the location to check (e.g. `39.1040382`)
 - `LONGITUDE`: Latitude of the location to check (e.g. `-94.5701803`)
 - `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
-- `ZIP_CODE`: Zip Code of the location to check (e.g. `64106`)
 
 Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
