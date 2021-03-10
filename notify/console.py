@@ -1,7 +1,10 @@
+import json
 import logging
 import os
 
 from constants import TRUE_VALUES
+
+states = json.loads(os.environ["STATES"])
 
 
 def format_available_message(locations):
@@ -25,7 +28,9 @@ def format_available_message(locations):
             day_string = ""
 
         message += "\n {}{}{}.\n\tSign up at {}\n\t{}".format(
-            "[{}]: ".format(location["state"]) if "state" in location else "",
+            "[{}]: ".format(location["state"])
+            if (len(states) > 0 and "state" in location)
+            else "",
             location["name"],
             day_string,
             location["link"],
@@ -41,7 +46,9 @@ def format_unavailable_message(locations):
     )
     for location in locations:
         message += "\n {}{}".format(
-            "[{}]: ".format(location["state"]) if "state" in location else "",
+            "[{}]: ".format(location["state"])
+            if (len(states) > 0 and "state" in location)
+            else "",
             location["name"],
         )
     return message

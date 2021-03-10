@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -29,6 +30,8 @@ client = Twitter()
 
 emojis = [None, "😷", "💉", "😷💉", "💉😷"]
 
+states = json.loads(os.environ["STATES"])
+
 
 def format_available_message(location, retry_attempt):
     if "earliest_appointment_day" in location:
@@ -42,7 +45,9 @@ def format_available_message(location, retry_attempt):
         day_string = ""
 
     return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}{}".format(
-        "{}: ".format(location["state"]) if "state" in location else "",
+        "{}: ".format(location["state"])
+        if (len(states) > 0 and "state" in location)
+        else "",
         location["name"],
         day_string,
         ", zip code {}".format(location["zip"]) if "zip" in location else "",
