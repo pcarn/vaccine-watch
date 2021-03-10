@@ -29,17 +29,10 @@ class Walgreens(Clinic):
         }
         response = requests.post(url, headers=headers, json=payload)
 
-        generic_walgreens = {
-            "id": "{}walgreens".format(os.environ["CACHE_PREFIX"]),
-            "name": "Walgreens",
-            "link": "https://www.walgreens.com/findcare/vaccination/covid-19/",
-            "zip": os.environ["ZIP_CODE"],
-        }
-
         if response.status_code == 200:
             data = response.json()
             generic_walgreens = {
-                "id": "walgreens",
+                "id": "{}walgreens".format(os.environ["CACHE_PREFIX"]),
                 "name": "Walgreens",
                 "link": "https://www.walgreens.com/findcare/vaccination/covid-19/",
                 "zip": data["zipCode"],
