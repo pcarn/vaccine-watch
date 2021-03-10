@@ -145,7 +145,7 @@ def get_appointment_info(location_id):
 def format_data(location):
     return {
         "link": "https://www.hy-vee.com/my-pharmacy/covid-vaccine-consent",
-        "id": "{}hyvee-{}".format(os.environ["CACHE_PREFIX"], location["location"]["locationId"]),
+        "id": "{}hyvee-{}".format(os.environ.get("CACHE_PREFIX", ""), location["location"]["locationId"]),
         "name": "Hy-Vee {}".format(location["location"]["name"]),
         "state": location["location"]["address"]["state"],
         "zip": location["location"]["address"]["zip"],

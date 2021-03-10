@@ -67,7 +67,7 @@ class CVS(Clinic):
 
 def format_data(location):
     return {
-        "id": "{}cvs-{}-{}".format(os.environ["CACHE_PREFIX"], location["state"], location["city"]),
+        "id": "{}cvs-{}-{}".format(os.environ.get("CACHE_PREFIX", ""), location["state"], location["city"]),
         "state": location["state"],
         "name": "CVS {}".format(
             " ".join([city.capitalize() for city in location["city"].split(" ")])

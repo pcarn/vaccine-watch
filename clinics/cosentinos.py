@@ -102,7 +102,7 @@ def format_data(location):
         "link": "https://app.squarespacescheduling.com/schedule.php?owner=21943707&calendarID={}".format(
             location["location_id"]
         ),
-        "id": "{}cosentinos-{}".format(os.environ["CACHE_PREFIX"], location["location_id"]),
+        "id": "{}cosentinos-{}".format(os.environ.get("CACHE_PREFIX", ""), location["location_id"]),
         "name": "{} {}".format(location["name"], location["city"]),
         "state": location["state"],
     }
