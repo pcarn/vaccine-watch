@@ -29,7 +29,7 @@ def format_available_message(locations):
 
         message += "\n {}{}{}.\n\tSign up at {}\n\t{}".format(
             "[{}]: ".format(location["state"])
-            if (len(states) > 0 and "state" in location)
+            if (len(states) > 1 and "state" in location)
             else "",
             location["name"],
             day_string,
@@ -47,7 +47,7 @@ def format_unavailable_message(locations):
     for location in locations:
         message += "\n {}{}".format(
             "[{}]: ".format(location["state"])
-            if (len(states) > 0 and "state" in location)
+            if (len(states) > 1 and "state" in location)
             else "",
             location["name"],
         )
