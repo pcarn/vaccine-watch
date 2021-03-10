@@ -38,11 +38,11 @@ class Walgreens(Clinic):
 
         if response.status_code == 200:
             if response.json()["appointmentsAvailable"] is True:
-                clinics_with_vaccine = [generic_walgreens]
-                clinics_without_vaccine = []
+                locations_with_vaccine = [generic_walgreens]
+                locations_without_vaccine = []
             else:
-                clinics_with_vaccine = []
-                clinics_without_vaccine = [generic_walgreens]
+                locations_with_vaccine = []
+                locations_without_vaccine = [generic_walgreens]
 
         else:
             logging.error(
@@ -50,10 +50,10 @@ class Walgreens(Clinic):
                     response.status_code, response.text
                 )
             )
-            clinics_with_vaccine = []
-            clinics_without_vaccine = []
+            locations_with_vaccine = []
+            locations_without_vaccine = []
 
         return {
-            "with_vaccine": clinics_with_vaccine,
-            "without_vaccine": clinics_without_vaccine,
+            "with_vaccine": locations_with_vaccine,
+            "without_vaccine": locations_without_vaccine,
         }

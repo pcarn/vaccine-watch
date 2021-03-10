@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 
@@ -29,63 +30,67 @@ client = Twitter()
 
 emojis = [None, "😷", "💉", "😷💉", "💉😷"]
 
+states = json.loads(os.environ["STATES"])
 
-def format_available_message(clinic, retry_attempt):
-    if "earliest_appointment_day" in clinic:
-        if clinic["earliest_appointment_day"] == clinic["latest_appointment_day"]:
-            day_string = " on {}".format(clinic["earliest_appointment_day"])
+
+def format_available_message(location, retry_attempt):
+    if "earliest_appointment_day" in location:
+        if location["earliest_appointment_day"] == location["latest_appointment_day"]:
+            day_string = " on {}".format(location["earliest_appointment_day"])
         else:
             day_string = " from {} to {}".format(
-                clinic["earliest_appointment_day"], clinic["latest_appointment_day"]
+                location["earliest_appointment_day"], location["latest_appointment_day"]
             )
     else:
         day_string = ""
 
     return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}{}".format(
-        "{}: ".format(clinic["state"]) if "state" in clinic else "",
-        clinic["name"],
+        "{}: ".format(location["state"])
+        if (len(states) > 0 and "state" in location)
+        else "",
+        location["name"],
         day_string,
-        ", zip code {}".format(clinic["zip"]) if "zip" in clinic else "",
-        shorten_url(clinic["link"]),
-        " (as of {})".format(clinic["appointments_last_fetched"])
-        if clinic.get("appointments_last_fetched", None)
+        ", zip code {}".format(location["zip"]) if "zip" in location else "",
+        shorten_url(location["link"]),
+        " (as of {})".format(location["appointments_last_fetched"])
+        if location.get("appointments_last_fetched", None)
         else "",
         " {}".format(emojis[retry_attempt]) if retry_attempt > 0 else "",
     )
 
 
-def format_unavailable_message(clinic):
+def format_unavailable_message(location):
     return "Vaccine appointments no longer available at {}{}.".format(
-        clinic["name"],
-        " (as of {})".format(clinic["appointments_last_fetched"])
-        if clinic.get("appointments_last_fetched", None)
+        location["name"],
+        " (as of {})".format(location["appointments_last_fetched"])
+        if location.get("appointments_last_fetched", None)
         else "",
     )
 
 
-def notify_clinic_available(clinic, retry_attempt=0):
+def notify_location_available(location, retry_attempt=0):
     try:
-        response = client.post_tweet(format_available_message(clinic, retry_attempt))
-        redis_client.set("tweet-{}".format(clinic["id"]), response.id)
+        response = client.post_tweet(format_available_message(location, retry_attempt))
+        redis_client.set("tweet-{}".format(location["id"]), response.id)
     except twitter.error.TwitterError as exception:
         if retry_attempt < 4 and exception.message[0]["code"] == 187:  # Duplicate Tweet
-            notify_clinic_available(clinic, retry_attempt=(retry_attempt + 1))
+            notify_location_available(location, retry_attempt=(retry_attempt + 1))
         else:
             logging.exception("Error when posting tweet")
 
 
-def notify_twitter_available_clinics(clinics):
-    for clinic in clinics:
-        notify_clinic_available(clinic)
+def notify_twitter_available_locations(locations):
+    for location in locations:
+        notify_location_available(location)
 
 
-def notify_twitter_unavailable_clinics(clinics):
-    for clinic in clinics:
+def notify_twitter_unavailable_locations(locations):
+    for location in locations:
         try:
-            previous_tweet_id = redis_client.get("tweet-{}".format(clinic["id"]))
+            previous_tweet_id = redis_client.get("tweet-{}".format(location["id"]))
             if previous_tweet_id:
                 client.post_tweet(
-                    format_unavailable_message(clinic),
+                    format_unavailable_message(location),
                     in_reply_to_status_id=previous_tweet_id,
                 )
         except twitter.error.TwitterError:

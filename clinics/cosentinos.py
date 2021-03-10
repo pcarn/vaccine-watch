@@ -11,28 +11,29 @@ from . import Clinic
 
 class Cosentinos(Clinic):
     def get_locations(self):
-        clinic_index_url = "https://www.cosentinos.com/covid-vaccine"
-        clinic_info_regex = r"<strong>(.{10,50})<\/strong><br \/>[\s\S]{1,50}<br \/>\s*(.{1,30}), (\w{2}) \d{5}<br \/>\s*[\d-]{12}<br(?: \/)?>[\s\S]{1,100}calendarID=(\d{7}).{1,50}Vaccine Availability<\/a>"
-        response = requests.get(clinic_index_url)
+        location_index_url = "https://www.cosentinos.com/covid-vaccine"
+        location_info_regex = r"<strong>(.{10,50})<\/strong><br \/>[\s\S]{1,50}<br \/>\s*(.{1,30}), (\w{2}) \d{5}<br \/>\s*[\d-]{12}<br(?: \/)?>[\s\S]{1,100}calendarID=(\d{7}).{1,50}Vaccine Availability<\/a>"
+        response = requests.get(location_index_url)
 
-        clinics_with_vaccine = []
-        clinics_without_vaccine = []
+        locations_with_vaccine = []
+        locations_without_vaccine = []
 
         if response.status_code == 200:
-            clinics = re.findall(clinic_info_regex, response.text)
-            for clinic in clinics:
-                clinic_data = format_data(
+            locations = re.findall(location_info_regex, response.text)
+            for location in locations:
+                name, city, state, location_id = location
+                location_data = format_data(
                     {
-                        "clinic_id": clinic[3],
-                        "name": clinic[0].replace("'", "'"),
-                        "city": clinic[1],
-                        "state": clinic[2],
+                        "location_id": location_id,
+                        "name": name.replace("'", "'"),
+                        "city": city,
+                        "state": state,
                     }
                 )
-                if get_availability_for_clinic(clinic[3]):
-                    clinics_with_vaccine.append(clinic_data)
+                if get_availability_for_location(location_id):
+                    locations_with_vaccine.append(location_data)
                 else:
-                    clinics_without_vaccine.append(clinic_data)
+                    locations_without_vaccine.append(location_data)
 
         else:
             logging.error(
@@ -42,18 +43,18 @@ class Cosentinos(Clinic):
             )
 
         return {
-            "with_vaccine": clinics_with_vaccine,
-            "without_vaccine": clinics_without_vaccine,
+            "with_vaccine": locations_with_vaccine,
+            "without_vaccine": locations_without_vaccine,
         }
 
 
-def get_availability_for_clinic(clinic_id):
+def get_availability_for_location(location_id):
     current_offset = 0
     more_results = True
     offset_regex = r"offset:(\d{2})[\s\S]{1,100}More Times"
 
     while more_results is True:
-        page_data = get_page(clinic_id, current_offset)
+        page_data = get_page(location_id, current_offset)
         # There are two on each page, except last page has zero
         offset_amount = int((re.findall(offset_regex, page_data) or [0])[0])
 
@@ -75,13 +76,13 @@ def get_availability_for_clinic(clinic_id):
     return False
 
 
-def get_page(clinic_id, offset):
+def get_page(location_id, offset):
     date_url = "https://app.squarespacescheduling.com/schedule.php?action=showCalendar&fulldate=1&owner=21943707&template=class"
     headers = {
         "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
     }
     payload = "type=&calendar=&month=&skip=true&options%5Boffset%5D={}&options%5BnumDays%5D=5&ignoreAppointment=&appointmentType=&calendarID={}".format(
-        offset, clinic_id
+        offset, location_id
     )
     response = requests.post(date_url, headers=headers, data=payload)
 
@@ -96,12 +97,12 @@ def get_page(clinic_id, offset):
         return ""
 
 
-def format_data(clinic):
+def format_data(location):
     return {
         "link": "https://app.squarespacescheduling.com/schedule.php?owner=21943707&calendarID={}".format(
-            clinic["clinic_id"]
+            location["location_id"]
         ),
-        "id": "cosentinos-{}".format(clinic["clinic_id"]),
-        "name": "{} {}".format(clinic["name"], clinic["city"]),
-        "state": clinic["state"],
+        "id": "cosentinos-{}".format(location["location_id"]),
+        "name": "{} {}".format(location["name"], location["city"]),
+        "state": location["state"],
     }
