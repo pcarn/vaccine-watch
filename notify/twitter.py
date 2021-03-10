@@ -46,7 +46,7 @@ def format_available_message(location, retry_attempt):
 
     return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}{}".format(
         "{}: ".format(location["state"])
-        if (len(states) > 0 and "state" in location)
+        if (len(states) > 1 and "state" in location)
         else "",
         location["name"],
         day_string,
