@@ -11,6 +11,7 @@ from .twitter import (
     notify_twitter_available_locations,
     notify_twitter_unavailable_locations,
 )
+from .discord import notify_discord_available_locations, notify_discord_unavailable_locations
 
 
 def notify_available(locations):
@@ -18,6 +19,8 @@ def notify_available(locations):
         notify_slack_available_locations(locations)
     if "TWITTER_CONSUMER_KEY" in os.environ:
         notify_twitter_available_locations(locations)
+    if "DISCORD_WEBHOOK_URL" in os.environ:
+        notify_discord_available_locations(locations)
     if (
         "NOTIFY_CONSOLE" in os.environ
         and os.environ["NOTIFY_CONSOLE"].lower() in TRUE_VALUES
@@ -30,6 +33,8 @@ def notify_unavailable(locations):
         notify_slack_unavailable_locations(locations)
     if "TWITTER_CONSUMER_KEY" in os.environ:
         notify_twitter_unavailable_locations(locations)
+    if "DISCORD_WEBHOOK_URL" in os.environ:
+        notify_discord_unavailable_locations(locations)
     if (
         "NOTIFY_CONSOLE" in os.environ
         and os.environ["NOTIFY_CONSOLE"].lower() in TRUE_VALUES

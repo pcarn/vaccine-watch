@@ -1,7 +1,7 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, and sending notifications to Slack and [Twitter](https://twitter.com/kcvaccinewatch).
+Supports checking Hy-Vee, and sending notifications to Slack, Discord and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
@@ -35,6 +35,12 @@ Twitter
 1. At the top, click `Install to Workspace`
 1. Copy your OAuth Token to use as `SLACK_BOT_TOKEN`
 
+### Discord
+1. Click the cog on the channel you want to add the notifications to and select `Edit Channel`
+1. Select the `Integrations` tab and click `Create Webhook`
+1. Enter a `Name` and `Channel` you want the webhook to notify and copy the Webhook URL.
+   
+
 ### Twitter
 1. Apply for a [Twitter Developer account](https://developer.twitter.com/en/portal/petition/use-case)
 1. Once you have the account, go to the [Developer Portal](https://developer.twitter.com/en/portal/dashboard)
@@ -63,7 +69,7 @@ Required Environment Variables:
   - CVS has a maximum of 25, vaccine-watch will use 25 for CVS if you set this higher.
 - `LATITUDE`: Latitude of the location to check (e.g. `39.1040382`)
 - `LONGITUDE`: Latitude of the location to check (e.g. `-94.5701803`)
-- `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
+- `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS", "IA"]`)
 
 Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
@@ -74,14 +80,17 @@ Optional Environment Variables:
 - CVS:
   - `ENABLE_CVS`: If you want to check CVS pharmacies
   - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for.
-    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
+    - example: `{"MO": ["SAINT LOUIS"], "KS": [], "IA": []}`
   - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
-    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
+    - example: `{"MO": ["SAINT LOUIS"], "KS": [], "IA": []}`
   - Any city that CVS returns for the state(s) in `STATES` that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
 - Slack:
   - `SLACK_BOT_TOKEN`: Token for your slack integration
   - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
   - `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
+- Discord:
+  - `DISCORD_WEBHOOK_URL`: Discord webhook url for channel.
+    - example: `https://discordapp.com/api/webhooks/1234567890/abc123`
 - Twitter:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
 - `TIMEZONE`: Timezone of your location (defaults to `'US/Central'`)
