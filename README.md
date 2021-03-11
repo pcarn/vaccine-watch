@@ -23,7 +23,7 @@ Twitter
 ## Setup
 1. [Install docker](https://docs.docker.com/get-docker/)
 1. Run `cp .env.template .env`
-1. Fill in the variables in `.env` if you want slack or twitter integration.
+1. Fill in the variables in `.env`
 1. `docker-compose up --build`
 
 ### Slack
@@ -39,7 +39,6 @@ Twitter
 1. Click the cog on the channel you want to add the notifications to and select `Edit Channel`
 1. Select the `Integrations` tab and click `Create Webhook`
 1. Enter a `Name` and `Channel` you want the webhook to notify and copy the Webhook URL.
-   
 
 ### Twitter
 1. Apply for a [Twitter Developer account](https://developer.twitter.com/en/portal/petition/use-case)
