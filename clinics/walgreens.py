@@ -32,7 +32,7 @@ class Walgreens(Clinic):
         if response.status_code == 200:
             data = response.json()
             generic_walgreens = {
-                "id": "walgreens",
+                "id": "{}walgreens".format(os.environ.get("CACHE_PREFIX", "")),
                 "name": "Walgreens",
                 "link": "https://www.walgreens.com/findcare/vaccination/covid-19/",
                 "zip": data["zipCode"],

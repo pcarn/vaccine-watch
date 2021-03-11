@@ -41,7 +41,9 @@ class Walmart(VaccineSpotterClinic):
 
         return {
             "link": "https://www.walmart.com/cp/flu-shots-immunizations/1228302",
-            "id": "walmart-{}".format(location["properties"]["id"]),
+            "id": "{}walmart-{}".format(
+                os.environ.get("CACHE_PREFIX", ""), location["properties"]["id"]
+            ),
             "name": "Walmart {}".format(location["properties"]["name"]),
             "state": location["properties"]["state"],
             "zip": location["properties"]["postal_code"],
