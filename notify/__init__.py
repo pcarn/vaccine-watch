@@ -6,12 +6,15 @@ from .console import (
     notify_console_available_locations,
     notify_console_unavailable_locations,
 )
+from .discord import (
+    notify_discord_available_locations,
+    notify_discord_unavailable_locations,
+)
 from .slack import notify_slack_available_locations, notify_slack_unavailable_locations
 from .twitter import (
     notify_twitter_available_locations,
     notify_twitter_unavailable_locations,
 )
-from .discord import notify_discord_available_locations, notify_discord_unavailable_locations
 
 
 def notify_available(locations):
