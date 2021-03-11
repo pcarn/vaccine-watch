@@ -36,6 +36,9 @@ class Walgreens(Clinic):
                 "name": "Walgreens",
                 "link": "https://www.walgreens.com/findcare/vaccination/covid-19/",
                 "zip": data["zipCode"],
+                "appointments_last_fetched": (
+                    datetime.now().astimezone(timezone(zone)).strftime("%-I:%M")
+                ),
             }
             if data["appointmentsAvailable"] is True:
                 locations_with_vaccine = [generic_walgreens]
