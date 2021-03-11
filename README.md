@@ -1,7 +1,8 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, and sending notifications to Slack, Discord, and [Twitter](https://twitter.com/kcvaccinewatch).
+Supports checking Hy-Vee, Walgreens, Walmart, Cosentino's stores (KC), and Ball's stores (KC).
+Supports sending notifications to Slack, Discord, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
