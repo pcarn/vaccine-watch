@@ -58,7 +58,9 @@ def get_all_location_data():
 
         return [
             {
-                "id": "{}balls-{}".format(os.environ.get("CACHE_PREFIX", ""), location[0]),
+                "id": "{}balls-{}".format(
+                    os.environ.get("CACHE_PREFIX", ""), location[0]
+                ),
                 "name": "{} {}".format(location[1], location[2]),
                 "state": location[3],
                 "enabled": any(
