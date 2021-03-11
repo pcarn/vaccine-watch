@@ -71,7 +71,10 @@ def format_unavailable_message(location):
 def notify_location_available(location, retry_attempt=0):
     try:
         response = client.post_tweet(format_available_message(location, retry_attempt))
-        redis_client.set("tweet-{}".format(location["id"]), response.id)
+        redis_client.set(
+            "{}tweet-{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"]),
+            response.id,
+        )
     except twitter.error.TwitterError as exception:
         if retry_attempt < 4 and exception.message[0]["code"] == 187:  # Duplicate Tweet
             notify_location_available(location, retry_attempt=(retry_attempt + 1))
@@ -87,7 +90,9 @@ def notify_twitter_available_locations(locations):
 def notify_twitter_unavailable_locations(locations):
     for location in locations:
         try:
-            previous_tweet_id = redis_client.get("tweet-{}".format(location["id"]))
+            previous_tweet_id = redis_client.get(
+                "{}tweet-{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"])
+            )
             if previous_tweet_id:
                 client.post_tweet(
                     format_unavailable_message(location),
