@@ -1,7 +1,7 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, and sending notifications to Slack, Discord and [Twitter](https://twitter.com/kcvaccinewatch).
+Supports checking Hy-Vee, and sending notifications to Slack, Discord, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
@@ -69,7 +69,7 @@ Required Environment Variables:
   - CVS has a maximum of 25, vaccine-watch will use 25 for CVS if you set this higher.
 - `LATITUDE`: Latitude of the location to check (e.g. `39.1040382`)
 - `LONGITUDE`: Latitude of the location to check (e.g. `-94.5701803`)
-- `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS", "IA"]`)
+- `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
 
 Optional Environment Variables:
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
@@ -80,9 +80,9 @@ Optional Environment Variables:
 - CVS:
   - `ENABLE_CVS`: If you want to check CVS pharmacies
   - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for.
-    - example: `{"MO": ["SAINT LOUIS"], "KS": [], "IA": []}`
+    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
   - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
-    - example: `{"MO": ["SAINT LOUIS"], "KS": [], "IA": []}`
+    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
   - Any city that CVS returns for the state(s) in `STATES` that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
 - Slack:
   - `SLACK_BOT_TOKEN`: Token for your slack integration

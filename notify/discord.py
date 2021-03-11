@@ -4,6 +4,8 @@ import os
 
 import requests
 
+from .utils import shorten_url
+
 states = json.loads(os.environ["STATES"])
 
 
@@ -18,9 +20,9 @@ def format_available_message(locations):
                 location["earliest_appointment_day"]
                 == location["latest_appointment_day"]
             ):
-                day_string = " on *{}*".format(location["earliest_appointment_day"])
+                day_string = " on **{}**".format(location["earliest_appointment_day"])
             else:
-                day_string = " from *{}* to *{}*".format(
+                day_string = " from **{}** to **{}**".format(
                     location["earliest_appointment_day"],
                     location["latest_appointment_day"],
                 )
@@ -28,12 +30,12 @@ def format_available_message(locations):
             day_string = ""
 
         message += "\n• {}{}{}. Sign up here: {}{}{}".format(
-            "*{}*: ".format(location["state"])
+            "**{}**: ".format(location["state"])
             if (len(states) > 1 and "state" in location)
             else "",
             location["name"],
             day_string,
-            location["link"],
+            shorten_url(location["link"]),
             ", zip code {}".format(location["zip"]) if "zip" in location else "",
             " (as of {})".format(location["appointments_last_fetched"])
             if location.get("appointments_last_fetched", None)
@@ -49,7 +51,7 @@ def format_unavailable_message(locations):
     )
     for location in locations:
         message += "\n• {}{}{}".format(
-            "*{}*: ".format(location["state"])
+            "**{}**: ".format(location["state"])
             if (len(states) > 1 and "state" in location)
             else "",
             location["name"],
@@ -69,8 +71,8 @@ def send_message_to_discord(message):
         logging.info(
             "Payload delivered successfully, code {}.".format(result.status_code)
         )
-    except requests.exceptions.HTTPError as err:
-        logging.exception(err)
+    except requests.exceptions.HTTPError:
+        logging.exception("Error sending message to discord")
 
 
 def notify_discord_available_locations(locations):
