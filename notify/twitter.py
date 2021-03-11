@@ -3,6 +3,7 @@ import logging
 import os
 
 import redis
+import requests
 import twitter
 
 from .utils import shorten_url
@@ -68,18 +69,28 @@ def format_unavailable_message(location):
     )
 
 
-def notify_location_available(location, retry_attempt=0):
-    try:
-        response = client.post_tweet(format_available_message(location, retry_attempt))
-        redis_client.set(
-            "{}tweet-{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"]),
-            response.id,
-        )
-    except twitter.error.TwitterError as exception:
-        if retry_attempt < 4 and exception.message[0]["code"] == 187:  # Duplicate Tweet
-            notify_location_available(location, retry_attempt=(retry_attempt + 1))
+def notify_location_available(location):
+    for retry_attempt in range(0, 5):
+        try:
+            response = client.post_tweet(
+                format_available_message(location, retry_attempt)
+            )
+            redis_client.set(
+                "{}tweet-{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"]),
+                response.id,
+            )
+        except twitter.error.TwitterError as exception:
+            if retry_attempt < 4 and exception.message[0]["code"] == 187:
+                logging.warn("Duplicate tweet error, will retry")
+            else:
+                logging.exception("Error when posting tweet")
+                break
+        except requests.exceptions.ConnectionError:
+            logging.exception("Connection error when posting tweet")
         else:
-            logging.exception("Error when posting tweet")
+            break
+    else:
+        logging.error("Five consecutive errors when posting tweet")
 
 
 def notify_twitter_available_locations(locations):
