@@ -1,7 +1,7 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, and sending notifications to Slack and [Twitter](https://twitter.com/kcvaccinewatch).
+Supports checking Hy-Vee, and sending notifications to Slack, Discord, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
@@ -23,7 +23,7 @@ Twitter
 ## Setup
 1. [Install docker](https://docs.docker.com/get-docker/)
 1. Run `cp .env.template .env`
-1. Fill in the variables in `.env` if you want slack or twitter integration.
+1. Fill in the variables in `.env`
 1. `docker-compose up --build`
 
 ### Slack
@@ -34,6 +34,11 @@ Twitter
 1. Add `chat:write:public` and `chat:write`
 1. At the top, click `Install to Workspace`
 1. Copy your OAuth Token to use as `SLACK_BOT_TOKEN`
+
+### Discord
+1. Click the cog on the channel you want to add the notifications to and select `Edit Channel`
+1. Select the `Integrations` tab and click `Create Webhook`
+1. Enter a `Name` and `Channel` you want the webhook to notify and copy the Webhook URL.
 
 ### Twitter
 1. Apply for a [Twitter Developer account](https://developer.twitter.com/en/portal/petition/use-case)
@@ -82,6 +87,9 @@ Optional Environment Variables:
   - `SLACK_BOT_TOKEN`: Token for your slack integration
   - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
   - `SLACK_CHANNEL`: Channel for the bot to post in (e.g. `#vaccine-watch`)
+- Discord:
+  - `DISCORD_WEBHOOK_URL`: Discord webhook url for channel.
+    - example: `https://discordapp.com/api/webhooks/1234567890/abc123`
 - Twitter:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
 - `TIMEZONE`: Timezone of your location (defaults to `'US/Central'`)
