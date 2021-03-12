@@ -62,6 +62,7 @@ def get_all_location_data():
     if response.status_code == 200:
         locations = re.findall(location_info_regex, response.text)
         page_data = BeautifulSoup(response.text, "html.parser")
+        # The site used to have other options in the list commented. It seems they're just missing from the DOM now.
         enabled_options = page_data.find_all("option")
 
         return [
