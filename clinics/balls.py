@@ -17,12 +17,20 @@ class Balls(Clinic):
 
         location_data = get_all_location_data()
 
+        valid_location_data = [
+            location
+            for location in location_data
+            if location["available_appointment_dates"] is not None
+        ]
+
         locations_with_vaccine = [
-            location for location in location_data if get_location_available(location)
+            location
+            for location in valid_location_data
+            if get_location_available(location)
         ]
         locations_without_vaccine = [
             location
-            for location in location_data
+            for location in valid_location_data
             if not get_location_available(location)
         ]
 
@@ -111,6 +119,6 @@ def get_available_appointment_dates(location_id):
                     logging.error(
                         "47 not in Balls data: keys are {}".format(data.keys())
                     )
-                    return []
+                    return None
     else:
-        return []
+        return None
