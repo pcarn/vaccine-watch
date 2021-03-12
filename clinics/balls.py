@@ -122,8 +122,6 @@ def get_available_appointment_dates(location_id):
                     return None
     else:
         logging.error(
-            "Bad response from Balls jotform: {} {}".format(
-                response.status_code, response.text
-            )
+            "Bad response from Balls jotform: {}".format(response.status_code)
         )
         return None
