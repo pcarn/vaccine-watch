@@ -2,61 +2,57 @@ import logging
 import os
 from datetime import datetime
 
-import requests
+from geopy.distance import distance
 from pytz import timezone
 
-from . import Clinic
+from .vaccine_spotter import VaccineSpotterClinic
 
 
-class Walgreens(Clinic):
-    def get_locations(self):
+class Walgreens(VaccineSpotterClinic):
+    def __init__(self):
+        self.here = (os.environ["LATITUDE"], os.environ["LONGITUDE"])
+        super().__init__()
+
+    def should_include_location(self, location):
+        coordinates = location["geometry"]["coordinates"]
+        longitude, latitude = coordinates
+        return location["properties"]["provider_brand"] == "walgreens" and distance(
+            self.here, (latitude, longitude)
+        ).miles < int(os.environ["RADIUS"])
+
+    def format_data(self, location):
         zone = os.environ.get("TIMEZONE", "US/Central")
-        url = "https://www.walgreens.com/hcschedulersvc/svc/v1/immunizationLocations/availability"
-        headers = {
-            "x-xsrf-token": os.environ["WALGREENS_X_XSRF_TOKEN"],
-            "cookie": "XSRF-TOKEN={}".format(os.environ["WALGREENS_XSRF_TOKEN_COOKIE"]),
-        }
-        payload = {
-            "serviceId": "99",
-            "position": {
-                "latitude": float(os.environ["LATITUDE"]),
-                "longitude": float(os.environ["LONGITUDE"]),
-            },
-            "appointmentAvailability": {
-                "startDateTime": datetime.now(timezone(zone)).strftime("%Y-%m-%d")
-            },
-            "radius": min(25, int(os.environ["RADIUS"])),
-        }
-        response = requests.post(url, headers=headers, json=payload)
-
-        if response.status_code == 200:
-            data = response.json()
-            generic_walgreens = {
-                "id": "{}walgreens".format(os.environ.get("CACHE_PREFIX", "")),
-                "name": "Walgreens",
-                "link": "https://www.walgreens.com/findcare/vaccination/covid-19/",
-                "zip": data["zipCode"],
-                "appointments_last_fetched": (
-                    datetime.now().astimezone(timezone(zone)).strftime("%-I:%M")
-                ),
-            }
-            if data["appointmentsAvailable"] is True:
-                locations_with_vaccine = [generic_walgreens]
-                locations_without_vaccine = []
-            else:
-                locations_with_vaccine = []
-                locations_without_vaccine = [generic_walgreens]
-
-        else:
-            logging.error(
-                "Bad response from Walgreens: Code {}: {}".format(
-                    response.status_code, response.text
+        try:
+            if location["properties"]["appointments_last_fetched"]:
+                appointments_last_fetched = (
+                    datetime.fromisoformat(
+                        location["properties"]["appointments_last_fetched"]
+                    )
+                    .astimezone(timezone(zone))
+                    .strftime("%-I:%M")
                 )
-            )
-            locations_with_vaccine = []
-            locations_without_vaccine = []
+            else:
+                appointments_last_fetched = None
+        except (
+            ValueError,
+            TypeError,
+        ) as e:  # Python doesn't like 2 digits for decimal fraction of second
+            appointments_last_fetched = None
 
         return {
-            "with_vaccine": locations_with_vaccine,
-            "without_vaccine": locations_without_vaccine,
+            "link": location["properties"]["url"],
+            "id": "{}walgreens-{}".format(
+                os.environ.get("CACHE_PREFIX", ""), location["properties"]["id"]
+            ),
+            "name": "Walgreens {}".format(
+                " ".join(
+                    [
+                        word.capitalize()
+                        for word in location["properties"]["city"].split(" ")
+                    ]
+                )
+            ),
+            "state": location["properties"]["state"],
+            "zip": location["properties"]["postal_code"],
+            "appointments_last_fetched": appointments_last_fetched,
         }

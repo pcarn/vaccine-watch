@@ -72,7 +72,7 @@ def format_data(location):
         ),
         "state": location["state"],
         "name": "CVS {}".format(
-            " ".join([city.capitalize() for city in location["city"].split(" ")])
+            " ".join([word.capitalize() for word in location["city"].split(" ")])
         ),
         "link": "https://www.cvs.com/immunizations/covid-19-vaccine?icid=cvs-home-hero1-link2-coronavirus-vaccine",
     }

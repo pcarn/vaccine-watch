@@ -40,7 +40,7 @@ class Walmart(VaccineSpotterClinic):
             appointments_last_fetched = None
 
         return {
-            "link": "https://www.walmart.com/pharmacy/clinical-services/immunization/scheduled?imzType=covid&r=yes",
+            "link": location["properties"]["url"],
             "id": "{}walmart-{}".format(
                 os.environ.get("CACHE_PREFIX", ""), location["properties"]["id"]
             ),
