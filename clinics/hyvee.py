@@ -47,9 +47,7 @@ class HyVee(Clinic):
 
         else:
             logging.error(
-                "Bad response from Hy-Vee: Code {}: {}".format(
-                    response.status_code, response.text
-                )
+                "Bad response from Hy-Vee: Code {}".format(response.status_code)
             )
             locations_with_vaccine = []
             locations_without_vaccine = []
@@ -80,11 +78,7 @@ def get_available_manufacturer_ids(location_id):
             logging.warning("Bad response from Hy-Vee, no list in response")
             return []
     else:
-        logging.error(
-            "Bad response from Hy-Vee: Code {}: {}".format(
-                response.status_code, response.text
-            )
-        )
+        logging.error("Bad response from Hy-Vee: Code {}".format(response.status_code))
         return []
 
 
@@ -108,11 +102,7 @@ def get_available_appointment_times(location_id, manufacturer_id):
             logging.warning("Bad response from Hy-Vee, no list in response")
             return []
     else:
-        logging.error(
-            "Bad response from Hy-Vee: Code {}: {}".format(
-                response.status_code, response.text
-            )
-        )
+        logging.error("Bad response from Hy-Vee: Code {}".format(response.status_code))
         return []
 
 
