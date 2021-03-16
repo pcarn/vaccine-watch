@@ -58,9 +58,8 @@ class VaccineSpotterClinic(Clinic):
                         locations_without_vaccine.append(formatted_location)
             else:
                 logging.error(
-                    "Bad response from Vaccine Spotter: Code {}: {}",
+                    "Bad response from Vaccine Spotter: Code {}",
                     response.status_code,
-                    response.text,
                 )
 
         return {
