@@ -17,7 +17,7 @@ class CVS(Clinic):
     def get_locations(self):
         url = "https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.json?vaccineinfo"
         response = requests.get(url)
-
+        site_locked_out = locked_out()
         locations_with_vaccine = []
         locations_without_vaccine = []
 
@@ -27,13 +27,20 @@ class CVS(Clinic):
                 try:
                     locations = data[state]
                 except KeyError:
-                    logging.info("State not included in CVS data yet")
+                    logging.info("{} not included in CVS data yet".format(state))
                     continue
 
                 for location in locations:
                     if location["city"] in self.allow_list[state]:
                         if location["status"] == "Available":
-                            locations_with_vaccine.append(format_data(location))
+                            if site_locked_out:
+                                logging.info(
+                                    "Would have notified for CVS {}, {} but site is locked out".format(
+                                        location["city"], state
+                                    )
+                                )
+                            else:
+                                locations_with_vaccine.append(format_data(location))
                         elif location["status"] == "Fully Booked":
                             locations_without_vaccine.append(format_data(location))
                         else:
@@ -63,6 +70,17 @@ class CVS(Clinic):
             "with_vaccine": locations_with_vaccine,
             "without_vaccine": locations_without_vaccine,
         }
+
+
+# CVS shows locations as available, but locks people out while they're adding locations.
+# Only report as available if you can register
+def locked_out():
+    url = "https://www.cvs.com/vaccine/intake/store/cvd-schedule?icid=coronavirus-lp-vaccine-pa-statetool"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return "Please check back later" in response.text
+    else:
+        return True  # Locked out if we can't get there
 
 
 def format_data(location):
