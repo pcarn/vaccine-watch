@@ -81,7 +81,7 @@ def notify_location_available(location):
             )
         except twitter.error.TwitterError as exception:
             if retry_attempt < 4 and exception.message[0]["code"] == 187:
-                logging.warn("Duplicate tweet error, will retry")
+                logging.warning("Duplicate tweet, will retry")
             else:
                 logging.exception("Error when posting tweet")
                 break
