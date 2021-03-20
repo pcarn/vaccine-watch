@@ -95,7 +95,7 @@ def get_available_appointment_times(location_id, manufacturer_id):
     response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
     if response.status_code == 200:
-        data = response.json()["data"]["getCovidVaccineTimeSlots"]
+        data = response.json().get("data", {}).get("getCovidVaccineTimeSlots")
         if isinstance(data, list):
             return data
         else:
