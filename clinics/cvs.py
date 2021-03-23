@@ -27,7 +27,7 @@ class CVS(Clinic):
                 try:
                     locations = data[state]
                 except KeyError:
-                    logging.info("{} not included in CVS data yet".format(state))
+                    logging.info("%s not included in CVS data yet", state)
                     continue
 
                 for location in locations:
@@ -35,9 +35,9 @@ class CVS(Clinic):
                         if location["status"] == "Available":
                             if site_locked_out:
                                 logging.info(
-                                    "Would have notified for CVS {}, {} but site is locked out".format(
-                                        location["city"], state
-                                    )
+                                    "Would have notified for CVS %s, %s but site is locked out",
+                                    location["city"],
+                                    state,
                                 )
                             else:
                                 locations_with_vaccine.append(format_data(location))
@@ -45,25 +45,24 @@ class CVS(Clinic):
                             locations_without_vaccine.append(format_data(location))
                         else:
                             logging.error(
-                                "Unknown location status from CVS: {}".format(
-                                    location["status"]
-                                )
+                                "Unknown location status from CVS: %s",
+                                location["status"],
                             )
                     elif (
                         state not in self.block_list
                         or location["city"] not in self.block_list[state]
                     ):
                         logging.warning(
-                            "New city found for CVS: {}, {}. Add to allow list or block list.".format(
-                                location["city"], state
-                            )
+                            "New city found for CVS: %s, %s. Add to allow list or block list.",
+                            location["city"],
+                            state,
                         )
 
         else:
             logging.error(
-                "Bad response from CVS: Code {}: {}".format(
-                    response.status_code, response.text
-                )
+                "Bad response from CVS: Code %s: %s",
+                response.status_code,
+                response.text,
             )
 
         return {

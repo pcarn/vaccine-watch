@@ -85,9 +85,7 @@ def get_all_location_data():
 
     else:
         logging.error(
-            "Bad response from Ball's: Code {}: {}".format(
-                response.status_code, response.text
-            )
+            "Bad response from Ball's: Code %s: %s", response.status_code, response.text
         )
 
         return []
@@ -117,12 +115,8 @@ def get_available_appointment_dates(location_id):
                         if data["47"][date] and any(data["47"][date].values())
                     ]
                 else:
-                    logging.error(
-                        "47 not in Balls data: keys are {}".format(data.keys())
-                    )
+                    logging.error("47 not in Balls data: keys are %s", data.keys())
                     return None
     else:
-        logging.error(
-            "Bad response from Balls jotform: {}".format(response.status_code)
-        )
+        logging.error("Bad response from Balls jotform: %s", response.status_code)
         return None

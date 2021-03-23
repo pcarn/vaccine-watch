@@ -68,9 +68,7 @@ def send_message_to_discord(message):
     try:
         result = requests.post(webhook_url, json=data)
         result.raise_for_status()
-        logging.info(
-            "Payload delivered successfully, code {}.".format(result.status_code)
-        )
+        logging.info("Payload delivered successfully, code %s.", result.status_code)
     except requests.exceptions.HTTPError:
         logging.exception("Error sending message to discord")
 

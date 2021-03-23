@@ -37,9 +37,9 @@ class Cosentinos(Clinic):
 
         else:
             logging.error(
-                "Bad response from Cosentinos: Code {}: {}".format(
-                    response.status_code, response.text
-                )
+                "Bad response from Cosentinos: Code %s: %s",
+                response.status_code,
+                response.text,
             )
 
         return {
@@ -90,9 +90,9 @@ def get_page(location_id, offset):
         return response.text
     else:
         logging.error(
-            "Bad Response from Cosentino's Squarespace: {} {}".format(
-                response.status_code, response.text
-            )
+            "Bad Response from Cosentino's Squarespace: %s %s",
+            response.status_code,
+            response.text,
         )
         return ""
 
