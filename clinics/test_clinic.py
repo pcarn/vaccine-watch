@@ -9,8 +9,8 @@ class TestClinic(Clinic):
         "name": "Test Location A",
         "state": "CA",
         "zip": "90210",
-        "earliest_appointment_day": "February 1 2021",
-        "latest_appointment_day": "February 28 2021",
+        "earliest_appointment_day": "March 1 2021",
+        "latest_appointment_day": "March 31 2021",
     }
 
     location_b = {
@@ -19,8 +19,8 @@ class TestClinic(Clinic):
         "name": "Test Location B",
         "state": "CA",
         "zip": "90211",
-        "earliest_appointment_day": "February 2 2021",
-        "latest_appointment_day": "February 3 2021",
+        "earliest_appointment_day": "March 2 2021",
+        "latest_appointment_day": "March 3 2021",
     }
 
     location_c = {
@@ -29,8 +29,8 @@ class TestClinic(Clinic):
         "name": "Test Location C",
         "state": "CA",
         "zip": "90210",
-        "earliest_appointment_day": "March 2 2021 9AM",
-        "latest_appointment_day": "March 2 2021 1115AM",
+        "earliest_appointment_day": "April 1 2021 9AM",
+        "latest_appointment_day": "April 2 2021 1115AM",
     }
 
     location_d = {
@@ -39,8 +39,8 @@ class TestClinic(Clinic):
         "name": "Test Location D",
         "state": "CA",
         "zip": "90211",
-        "earliest_appointment_day": "March 3 2021 10AM",
-        "latest_appointment_day": "March 4 2021 10AM",
+        "earliest_appointment_day": "May 3 2021 10AM",
+        "latest_appointment_day": "May 4 2021 10AM",
     }
 
     flip = False
