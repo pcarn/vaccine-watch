@@ -64,13 +64,13 @@ def send_message_to_twilio(message):
         recipients = json.loads(os.environ["TWILIO_TO_NUMBERS"])
         for recipient in recipients:
             try:
-                message = client.api.account.messages.create(
+                response = client.api.account.messages.create(
                     to=recipient,
                     from_=os.environ["TWILIO_FROM_NUMBER"],
                     body=message
                 )
                 logging.info(
-                    "Payload delivered successfully, code {}.".format(message.status)
+                    "Payload delivered successfully, code {}.".format(response.status)
                 )
             except:
                 logging.exception("Error sending message to twilio")
