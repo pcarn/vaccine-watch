@@ -52,9 +52,9 @@ Twitter
 1. Sign up for a [Twilio account](https://www.twilio.com/try-twilio)
 1. Once you have the account, go to the [Console Dashboard](https://www.twilio.com/console) of your Twilio account console
 1. Navigate to the `Phone Numbers` page in your Twilio account console, then click `Getting Started`
-1. Select `Get your first Twilio phone number` and follow hte prompts to procure a Twilio phone number
+1. Select `Get your first Twilio phone number` and follow the prompts to procure a Twilio phone number
 1. Verify any recipient phone numbers you will be notifying under `Phone Numbers` then [Verified Caller IDs](https://www.twilio.com/console/phone-numbers/verified) (only required for a trial account)
-1. Copy your Twilio Account SID, Auth Token, Twilio phone bumber, and verified phone numbers to your `.env` file
+1. Copy your Twilio Account SID, Auth Token, Twilio phone number, and verified phone numbers to your `.env` file
 
 ## Lint
 1. Install [pre-commit](https://pre-commit.com)
