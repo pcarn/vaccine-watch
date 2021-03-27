@@ -15,13 +15,15 @@ class CVS(Clinic):
         self.states = json.loads(os.environ["STATES"])
 
     def get_locations(self):
-        url = "https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.json?vaccineinfo"
-        response = requests.get(url)
+
         site_locked_out = locked_out()
         locations_with_vaccine = []
         locations_without_vaccine = []
+        url = "https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.json?vaccineinfo"
+        response = requests.get(url)
 
-        if response.status_code == 200:
+        try:
+            response.raise_for_status()
             data = response.json()["responsePayloadData"]["data"]
             for state in self.states:
                 try:
@@ -58,11 +60,9 @@ class CVS(Clinic):
                             state,
                         )
 
-        else:
-            logging.error(
-                "Bad response from CVS: Code %s: %s",
-                response.status_code,
-                response.text,
+        except requests.exceptions.HTTPError:
+            logging.exception(
+                "Bad response from CVS",
             )
 
         return {
@@ -76,9 +76,11 @@ class CVS(Clinic):
 def locked_out():
     url = "https://www.cvs.com/vaccine/intake/store/cvd-schedule?icid=coronavirus-lp-vaccine-pa-statetool"
     response = requests.get(url)
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         return "Please check back later" in response.text
-    else:
+    except requests.exceptions.HTTPError:
+        logging.exception("Bad response from CVS")
         return True  # Locked out if we can't get there
 
 

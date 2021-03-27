@@ -30,7 +30,8 @@ class VaccineSpotterClinic(Clinic):
 
         for state in self.states:
             response = requests.get(vaccine_spotter_api_url_template.format(state))
-            if response.status_code == 200:
+            try:
+                response.raise_for_status()
                 data = response.json()
 
                 matching_locations = [
@@ -56,10 +57,9 @@ class VaccineSpotterClinic(Clinic):
                         locations_with_vaccine.append(formatted_location)
                     else:
                         locations_without_vaccine.append(formatted_location)
-            else:
-                logging.error(
-                    "Bad response from Vaccine Spotter: Code %s",
-                    response.status_code,
+            except requests.exceptions.HTTPError:
+                logging.exception(
+                    "Bad response from Vaccine Spotter",
                 )
 
         return {

@@ -3,7 +3,9 @@ import requests
 
 def shorten_url(url):
     response = requests.get("http://tinyurl.com/api-create.php?url={}".format(url))
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         return response.text
-    else:
+    except requests.exceptions.HTTPError:
+        logging.warning("Error when shortening url, will use original")
         return url

@@ -58,7 +58,8 @@ def get_all_location_data():
     location_index_url = "https://ballsfoodspharmacy.com"
     location_info_regex = '<option value="https:\/\/hipaa.jotform\.com\/(\d{10,20})">(.{1,100}) - .{1,100} - (.{1,100}), (\w{2}) \d{5}<\/option>'
     response = requests.get(location_index_url)
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         locations = re.findall(location_info_regex, response.text)
         page_data = BeautifulSoup(response.text, "html.parser")
         # The site used to have other options in the list commented. It seems they're just missing from the DOM now.
@@ -82,10 +83,8 @@ def get_all_location_data():
             for location in locations
         ]
 
-    else:
-        logging.error(
-            "Bad response from Ball's: Code %s: %s", response.status_code, response.text
-        )
+    except requests.exceptions.HTTPError:
+        logging.exception("Bad response from Ball's")
 
         return []
 
@@ -97,25 +96,26 @@ def timestamp_to_date(timestamp):
 def get_available_appointment_dates(location_id):
     url = "https://hipaa.jotform.com/{}".format(location_id)
     response = requests.get(url)
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         if "All appointments have been filled" in response.text:
             return []
+
+        form_url = "https://hipaa.jotform.com/server.php?action=getAppointments&formID={}&timezone=America%2FChicago%20(GMT-06%3A00)&ncTz=1615050226593&firstAvailableDates".format(
+            location_id
+        )
+        response = requests.get(form_url)
+        response.raise_for_status()
+        data = response.json()["content"]
+        if "47" in data:
+            return [
+                timestamp_to_date(date)
+                for date in data["47"].keys()
+                if data["47"][date] and any(data["47"][date].values())
+            ]
         else:
-            api_url = "https://hipaa.jotform.com/server.php?action=getAppointments&formID={}&timezone=America%2FChicago%20(GMT-06%3A00)&ncTz=1615050226593&firstAvailableDates".format(
-                location_id
-            )
-            response = requests.get(api_url)
-            if response.status_code == 200:
-                data = response.json()["content"]
-                if "47" in data:
-                    return [
-                        timestamp_to_date(date)
-                        for date in data["47"].keys()
-                        if data["47"][date] and any(data["47"][date].values())
-                    ]
-                else:
-                    logging.error("47 not in Balls data: keys are %s", data.keys())
-                    return None
-    else:
-        logging.error("Bad response from Balls jotform: %s", response.status_code)
+            logging.error("47 not in Balls data: keys are %s", data.keys())
+            return None
+    except requests.exceptions.HTTPError:
+        logging.exception("Bad response from Ball's")
         return None

@@ -11,12 +11,14 @@ class Cosentinos(Clinic):
     def get_locations(self):
         location_index_url = "https://www.cosentinos.com/covid-vaccine"
         location_info_regex = r"<strong>(.{10,50})<\/strong><br \/>[\s\S]{1,50}<br \/>\s*(.{1,30}), (\w{2}) \d{5}<br \/>\s*[\d-]{12}<br(?: \/)?>[\s\S]{1,100}calendarID=(\d{7}).{1,50}Vaccine Availability<\/a>"
-        response = requests.get(location_index_url)
 
         locations_with_vaccine = []
         locations_without_vaccine = []
 
-        if response.status_code == 200:
+        response = requests.get(location_index_url)
+
+        try:
+            response.raise_for_status()
             locations = re.findall(location_info_regex, response.text)
             for location in locations:
                 name, city, state, location_id = location
@@ -33,11 +35,9 @@ class Cosentinos(Clinic):
                 else:
                     locations_without_vaccine.append(location_data)
 
-        else:
-            logging.error(
-                "Bad response from Cosentinos: Code %s: %s",
-                response.status_code,
-                response.text,
+        except requests.exceptions.HTTPError:
+            logging.exception(
+                "Bad response from Cosentino's",
             )
 
         return {
@@ -84,13 +84,12 @@ def get_page(location_id, offset):
     )
     response = requests.post(date_url, headers=headers, data=payload)
 
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         return response.text
-    else:
-        logging.error(
-            "Bad Response from Cosentino's Squarespace: %s %s",
-            response.status_code,
-            response.text,
+    except requests.exceptions.HTTPError:
+        logging.exception(
+            "Bad Response from Cosentino's",
         )
         return ""
 

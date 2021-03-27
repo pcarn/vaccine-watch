@@ -25,11 +25,7 @@ class Twilio(NotificationMethod):
                         from_=os.environ["TWILIO_FROM_NUMBER"],
                         body=message,
                     )
-                    logging.info(
-                        "Payload delivered successfully, code {}.".format(
-                            response.status
-                        )
-                    )
+                    logging.debug("Message to twilio sent successfully")
                 except TwilioRestException:
                     logging.exception("Error when sending message to Twilio")
 

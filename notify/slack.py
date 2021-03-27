@@ -16,9 +16,10 @@ class Slack(NotificationMethod):
 
     def send_message_to_slack(self, message):
         try:
-            response = self.client.chat_postMessage(
+            self.client.chat_postMessage(
                 channel=os.environ["SLACK_CHANNEL"], text=message
             )
+            logging.debug("Message to slack sent successfully")
         except SlackApiError:
             logging.exception("Failed to send message to slack")
 

@@ -34,6 +34,7 @@ class Twitter(NotificationMethod):
                     response = self.post_tweet(
                         format_available_message(location, retry_attempt)
                     )
+                    logging.debug("Message to twitter delivered successfully")
                     redis_client.set(
                         "{}tweet-{}".format(
                             os.environ.get("CACHE_PREFIX", ""), location["id"]

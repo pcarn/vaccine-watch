@@ -24,7 +24,8 @@ class HyVee(Clinic):
         }
         response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
-        if response.status_code == 200:
+        try:
+            response.raise_for_status()
             locations = response.json()["data"]["searchPharmaciesNearPoint"]
             if isinstance(locations, list):
                 locations_with_vaccine = [
@@ -45,8 +46,8 @@ class HyVee(Clinic):
                 locations_with_vaccine = []
                 locations_without_vaccine = []
 
-        else:
-            logging.error("Bad response from Hy-Vee: Code %s", response.status_code)
+        except requests.exceptions.HTTPError:
+            logging.exception("Bad response from Hy-Vee")
             locations_with_vaccine = []
             locations_without_vaccine = []
 
@@ -64,7 +65,8 @@ def get_available_manufacturer_ids(location_id):
     }
     response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         data = response.json()["data"]["getCovidVaccineLocationAvailability"]
         if isinstance(data, list):
             return [
@@ -75,8 +77,8 @@ def get_available_manufacturer_ids(location_id):
         else:
             logging.warning("Bad response from Hy-Vee, no list in response")
             return []
-    else:
-        logging.error("Bad response from Hy-Vee: Code %s", response.status_code)
+    except requests.exceptions.HTTPError:
+        logging.exception("Bad response from Hy-Vee")
         return []
 
 
@@ -92,15 +94,16 @@ def get_available_appointment_times(location_id, manufacturer_id):
 
     response = requests.post(HYVEE_URL, headers=HEADERS, json=payload)
 
-    if response.status_code == 200:
+    try:
+        response.raise_for_status()
         data = response.json().get("data", {}).get("getCovidVaccineTimeSlots")
         if isinstance(data, list):
             return data
         else:
             logging.warning("Bad response from Hy-Vee, no list in response")
             return []
-    else:
-        logging.error("Bad response from Hy-Vee: Code %s", response.status_code)
+    except requests.exceptions.HTTPError:
+        logging.error("Bad response from Hy-Vee")
         return []
 
 
