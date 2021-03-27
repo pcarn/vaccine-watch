@@ -35,11 +35,11 @@ class Twilio(NotificationMethod):
 
     def notify_available_locations(self, locations):
         for location in locations:
-            send_message_to_twilio(format_available_message(location))
+            self.send_message_to_twilio(format_available_message(location))
 
     def notify_unavailable_locations(self, locations):
         for location in locations:
-            send_message_to_twilio(format_unavailable_message(location))
+            self.send_message_to_twilio(format_unavailable_message(location))
 
 
 states = json.loads(os.environ["STATES"])

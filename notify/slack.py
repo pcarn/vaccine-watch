@@ -21,10 +21,10 @@ class Slack(NotificationMethod):
             logging.exception("Failed to send message to slack")
 
     def notify_available_locations(self, locations):
-        send_message_to_slack(format_available_message(locations))
+        self.send_message_to_slack(format_available_message(locations))
 
     def notify_unavailable_locations(self, locations):
-        send_message_to_slack(format_unavailable_message(locations))
+        self.send_message_to_slack(format_unavailable_message(locations))
 
 
 states = json.loads(os.environ["STATES"])
