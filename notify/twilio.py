@@ -15,7 +15,7 @@ class Twilio(NotificationMethod):
         auth_token = os.environ["TWILIO_AUTH_TOKEN"]
         self.client = Client(account_sid, auth_token)
 
-    def send_message_to_twilio(message):
+    def send_message_to_twilio(self, message):
         if "TWILIO_TO_NUMBERS" in os.environ:
             recipients = json.loads(os.environ["TWILIO_TO_NUMBERS"])
             for recipient in recipients:

@@ -5,6 +5,8 @@ import os
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+from utils import env_var_is_true
+
 from . import NotificationMethod
 
 
@@ -12,7 +14,7 @@ class Slack(NotificationMethod):
     def __init__(self):
         self.client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
 
-    def send_message_to_slack(message):
+    def send_message_to_slack(self, message):
         try:
             response = self.client.chat_postMessage(
                 channel=os.environ["SLACK_CHANNEL"], text=message
