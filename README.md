@@ -2,7 +2,7 @@
 Bot to notify when vaccine appointments are available.
 
 Supports checking Hy-Vee, Walgreens, CVS, Walmart, Cosentino's stores (KC), and Ball's stores (KC).
-Supports sending notifications to Slack, Discord, and [Twitter](https://twitter.com/kcvaccinewatch).
+Supports sending notifications to Slack, Discord, Twilio, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
@@ -48,6 +48,14 @@ Twitter
 1. Add `Read & Write` permissions to your app
 1. In `Keys & Tokens`, generate Consumer Keys and Access Token/Secret to use as environment variables
 
+### Twilio
+1. Sign up for a [Twilio account](https://www.twilio.com/try-twilio)
+1. Once you have the account, go to the [Console Dashboard](https://www.twilio.com/console) of your Twilio account console
+1. Navigate to the `Phone Numbers` page in your Twilio account console, then click `Getting Started`
+1. Select `Get your first Twilio phone number` and follow the prompts to procure a Twilio phone number
+1. Verify any recipient phone numbers you will be notifying under `Phone Numbers` then [Verified Caller IDs](https://www.twilio.com/console/phone-numbers/verified) (only required for a trial account)
+1. Copy your Twilio Account SID, Auth Token, Twilio phone number, and verified phone numbers to your `.env` file
+
 ## Lint
 1. Install [pre-commit](https://pre-commit.com)
 1. `pre-commit install`
@@ -85,6 +93,12 @@ Optional Environment Variables:
 - Discord:
   - `DISCORD_WEBHOOK_URL`: Discord webhook url for channel.
     - example: `https://discordapp.com/api/webhooks/1234567890/abc123`
+- Twilio:
+  - `TWILIO_ACCOUNT_SID`: Account SID for your twilio account
+  - `TWILIO_AUTH_TOKEN`: Auth token for your twilio account
+  - `TWILIO_FROM_NUMBER`: Twilio phone number with SMS functionality in `[+][country code][phone number including area code]` format
+  - `TWILIO_TO_NUMBERS`: Phone numbers to notify as an array of the following format `[+][country code][phone number including area code]`
+    - example: `["+15551234567", "+15552345678"]`
 - Twitter:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
 - `TIMEZONE`: Timezone of your location (defaults to `'US/Central'`)
