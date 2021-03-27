@@ -6,12 +6,13 @@ import redis
 import requests
 import twitter
 
+from . import NotificationMethod
 from .utils import shorten_url
 
 redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
 
 
-class Twitter:
+class Twitter(NotificationMethod):
     def __init__(self):
         if "TWITTER_CONSUMER_KEY" in os.environ:
             self.client = twitter.Api(
@@ -26,8 +27,48 @@ class Twitter:
             content, in_reply_to_status_id=in_reply_to_status_id
         )
 
+    def notify_available_locations(self, locations):
+        for location in locations:
+            for retry_attempt in range(0, 5):
+                try:
+                    response = self.post_tweet(
+                        format_available_message(location, retry_attempt)
+                    )
+                    redis_client.set(
+                        "{}tweet-{}".format(
+                            os.environ.get("CACHE_PREFIX", ""), location["id"]
+                        ),
+                        response.id,
+                    )
+                except twitter.error.TwitterError as exception:
+                    if retry_attempt < 4 and exception.message[0]["code"] == 187:
+                        logging.warning("Duplicate tweet, will retry")
+                    else:
+                        logging.exception("Error when posting tweet")
+                        break
+                except requests.exceptions.ConnectionError:
+                    logging.exception("Connection error when posting tweet")
+                else:
+                    break
+            else:
+                logging.error("Five consecutive errors when posting tweet")
 
-client = Twitter()
+    def notify_unavailable_locations(self, locations):
+        for location in locations:
+            try:
+                previous_tweet_id = redis_client.get(
+                    "{}tweet-{}".format(
+                        os.environ.get("CACHE_PREFIX", ""), location["id"]
+                    )
+                )
+                if previous_tweet_id:
+                    self.post_tweet(
+                        format_unavailable_message(location),
+                        in_reply_to_status_id=previous_tweet_id,
+                    )
+            except twitter.error.TwitterError:
+                logging.exception("Error when posting tweet")
+
 
 emojis = [None, "😷", "💉", "😷💉", "💉😷"]
 
@@ -67,47 +108,3 @@ def format_unavailable_message(location):
         if location.get("appointments_last_fetched", None)
         else "",
     )
-
-
-def notify_location_available(location):
-    for retry_attempt in range(0, 5):
-        try:
-            response = client.post_tweet(
-                format_available_message(location, retry_attempt)
-            )
-            redis_client.set(
-                "{}tweet-{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"]),
-                response.id,
-            )
-        except twitter.error.TwitterError as exception:
-            if retry_attempt < 4 and exception.message[0]["code"] == 187:
-                logging.warning("Duplicate tweet, will retry")
-            else:
-                logging.exception("Error when posting tweet")
-                break
-        except requests.exceptions.ConnectionError:
-            logging.exception("Connection error when posting tweet")
-        else:
-            break
-    else:
-        logging.error("Five consecutive errors when posting tweet")
-
-
-def notify_twitter_available_locations(locations):
-    for location in locations:
-        notify_location_available(location)
-
-
-def notify_twitter_unavailable_locations(locations):
-    for location in locations:
-        try:
-            previous_tweet_id = redis_client.get(
-                "{}tweet-{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"])
-            )
-            if previous_tweet_id:
-                client.post_tweet(
-                    format_unavailable_message(location),
-                    in_reply_to_status_id=previous_tweet_id,
-                )
-        except twitter.error.TwitterError:
-            logging.exception("Error when posting tweet")

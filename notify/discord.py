@@ -4,7 +4,17 @@ import os
 
 import requests
 
+from . import NotificationMethod
 from .utils import shorten_url
+
+
+class Discord(NotificationMethod):
+    def notify_available_locations(self, locations):
+        send_message_to_discord(format_available_message(locations))
+
+    def notify_unavailable_locations(self, locations):
+        send_message_to_discord(format_unavailable_message(locations))
+
 
 states = json.loads(os.environ["STATES"])
 
@@ -71,11 +81,3 @@ def send_message_to_discord(message):
         logging.info("Payload delivered successfully, code %s.", result.status_code)
     except requests.exceptions.HTTPError:
         logging.exception("Error sending message to discord")
-
-
-def notify_discord_available_locations(locations):
-    send_message_to_discord(format_available_message(locations))
-
-
-def notify_discord_unavailable_locations(locations):
-    send_message_to_discord(format_unavailable_message(locations))

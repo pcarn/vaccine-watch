@@ -5,6 +5,28 @@ import os
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+from . import NotificationMethod
+
+
+class Slack(NotificationMethod):
+    def __init__(self):
+        self.client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
+
+    def send_message_to_slack(message):
+        try:
+            response = self.client.chat_postMessage(
+                channel=os.environ["SLACK_CHANNEL"], text=message
+            )
+        except SlackApiError:
+            logging.exception("Failed to send message to slack")
+
+    def notify_available_locations(self, locations):
+        send_message_to_slack(format_available_message(locations))
+
+    def notify_unavailable_locations(self, locations):
+        send_message_to_slack(format_unavailable_message(locations))
+
+
 states = json.loads(os.environ["STATES"])
 
 
@@ -60,21 +82,3 @@ def format_unavailable_message(locations):
             else "",
         )
     return message
-
-
-def send_message_to_slack(message):
-    client = WebClient(token=os.environ["SLACK_BOT_TOKEN"])
-    try:
-        response = client.chat_postMessage(
-            channel=os.environ["SLACK_CHANNEL"], text=message
-        )
-    except SlackApiError:
-        logging.exception("Failed to send message to slack")
-
-
-def notify_slack_available_locations(locations):
-    send_message_to_slack(format_available_message(locations))
-
-
-def notify_slack_unavailable_locations(locations):
-    send_message_to_slack(format_unavailable_message(locations))

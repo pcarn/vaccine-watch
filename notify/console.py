@@ -2,6 +2,17 @@ import json
 import logging
 import os
 
+from . import NotificationMethod
+
+
+class Console(NotificationMethod):
+    def notify_available_locations(self, locations):
+        print("[CONSOLE] {}".format(format_available_message(locations)))
+
+    def notify_unavailable_locations(self, locations):
+        print("[CONSOLE] {}".format(format_unavailable_message(locations)))
+
+
 states = json.loads(os.environ["STATES"])
 
 
@@ -50,11 +61,3 @@ def format_unavailable_message(locations):
             location["name"],
         )
     return message
-
-
-def notify_console_available_locations(locations):
-    print("[CONSOLE] {}".format(format_available_message(locations)))
-
-
-def notify_console_unavailable_locations(locations):
-    print("[CONSOLE] {}".format(format_unavailable_message(locations)))

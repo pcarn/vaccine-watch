@@ -5,7 +5,42 @@ import os
 from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
+from . import NotificationMethod
 from .utils import shorten_url
+
+
+class Twilio(NotificationMethod):
+    def __init__(self):
+        account_sid = os.environ["TWILIO_ACCOUNT_SID"]
+        auth_token = os.environ["TWILIO_AUTH_TOKEN"]
+        self.client = Client(account_sid, auth_token)
+
+    def send_message_to_twilio(message):
+        if "TWILIO_TO_NUMBERS" in os.environ:
+            recipients = json.loads(os.environ["TWILIO_TO_NUMBERS"])
+            for recipient in recipients:
+                try:
+                    response = self.client.api.account.messages.create(
+                        to=recipient,
+                        from_=os.environ["TWILIO_FROM_NUMBER"],
+                        body=message,
+                    )
+                    logging.info(
+                        "Payload delivered successfully, code {}.".format(
+                            response.status
+                        )
+                    )
+                except TwilioRestException:
+                    logging.exception("Error when sending message to Twilio")
+
+    def notify_available_locations(self, locations):
+        for location in locations:
+            send_message_to_twilio(format_available_message(location))
+
+    def notify_unavailable_locations(self, locations):
+        for location in locations:
+            send_message_to_twilio(format_unavailable_message(location))
+
 
 states = json.loads(os.environ["STATES"])
 
@@ -43,32 +78,3 @@ def format_unavailable_message(location):
         if location.get("appointments_last_fetched", None)
         else "",
     )
-
-
-def send_message_to_twilio(message):
-    account_sid = os.environ["TWILIO_ACCOUNT_SID"]
-    auth_token = os.environ["TWILIO_AUTH_TOKEN"]
-    client = Client(account_sid, auth_token)
-
-    if "TWILIO_TO_NUMBERS" in os.environ:
-        recipients = json.loads(os.environ["TWILIO_TO_NUMBERS"])
-        for recipient in recipients:
-            try:
-                response = client.api.account.messages.create(
-                    to=recipient, from_=os.environ["TWILIO_FROM_NUMBER"], body=message
-                )
-                logging.info(
-                    "Payload delivered successfully, code {}.".format(response.status)
-                )
-            except TwilioRestException as e:
-                logging.exception(e)
-
-
-def notify_twilio_available_locations(locations):
-    for location in locations:
-        send_message_to_twilio(format_available_message(location))
-
-
-def notify_twilio_unavailable_locations(locations):
-    for location in locations:
-        send_message_to_twilio(format_unavailable_message(location))
