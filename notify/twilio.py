@@ -2,62 +2,52 @@ import json
 import logging
 import os
 
+from twilio.base.exceptions import TwilioRestException
 from twilio.rest import Client
 
 from .utils import shorten_url
 
 states = json.loads(os.environ["STATES"])
 
-def format_available_message(locations):
-    message = "Vaccine appointments available at {} location{}:".format(
-        "these" if len(locations) > 1 else "this",
-        "s" if len(locations) > 1 else "",
-    )
-    for location in locations:
-        if "earliest_appointment_day" in location:
-            if (
-                location["earliest_appointment_day"]
-                == location["latest_appointment_day"]
-            ):
-                day_string = " on {}".format(location["earliest_appointment_day"])
-            else:
-                day_string = " from {} to {}".format(
-                    location["earliest_appointment_day"],
-                    location["latest_appointment_day"],
-                )
+
+def format_available_message(location):
+    if "earliest_appointment_day" in location:
+        if location["earliest_appointment_day"] == location["latest_appointment_day"]:
+            day_string = " on {}".format(location["earliest_appointment_day"])
         else:
-            day_string = ""
+            day_string = " from {} to {}".format(
+                location["earliest_appointment_day"],
+                location["latest_appointment_day"],
+            )
+    else:
+        day_string = ""
 
-        message += "\n• {}{}{}. Sign up here: {}{}".format(
-            "{}: ".format(location["state"])
-            if (len(states) > 1 and "state" in location)
-            else "",
-            location["name"],
-            day_string,
-            shorten_url(location["link"]),
-            ", zip code {}".format(location["zip"]) if "zip" in location else "",
-        )
-    return message
-
-
-def format_unavailable_message(locations):
-    message = "Vaccine appointments no longer available at {} location{}:".format(
-        "these" if len(locations) > 1 else "this",
-        "s" if len(locations) > 1 else "",
+    return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}".format(
+        "{}: ".format(location["state"])
+        if (len(states) > 1 and "state" in location)
+        else "",
+        location["name"],
+        day_string,
+        ", zip code {}".format(location["zip"]) if "zip" in location else "",
+        shorten_url(location["link"]),
+        " (as of {})".format(location["appointments_last_fetched"])
+        if location.get("appointments_last_fetched", None)
+        else "",
     )
-    for location in locations:
-        message += "\n• {}{}".format(
-            location["state"]
-            if (len(states) > 1 and "state" in location)
-            else "",
-            location["name"],
-        )
-    return message
+
+
+def format_unavailable_message(location):
+    return "Vaccine appointments no longer available at {}{}.".format(
+        location["name"],
+        " (as of {})".format(location["appointments_last_fetched"])
+        if location.get("appointments_last_fetched", None)
+        else "",
+    )
 
 
 def send_message_to_twilio(message):
-    account_sid = os.environ['TWILIO_ACCOUNT_SID']
-    auth_token = os.environ['TWILIO_AUTH_TOKEN']
+    account_sid = os.environ["TWILIO_ACCOUNT_SID"]
+    auth_token = os.environ["TWILIO_AUTH_TOKEN"]
     client = Client(account_sid, auth_token)
 
     if "TWILIO_TO_NUMBERS" in os.environ:
@@ -65,20 +55,20 @@ def send_message_to_twilio(message):
         for recipient in recipients:
             try:
                 response = client.api.account.messages.create(
-                    to=recipient,
-                    from_=os.environ["TWILIO_FROM_NUMBER"],
-                    body=message
+                    to=recipient, from_=os.environ["TWILIO_FROM_NUMBER"], body=message
                 )
                 logging.info(
                     "Payload delivered successfully, code {}.".format(response.status)
                 )
-            except:
-                logging.exception("Error sending message to twilio")
+            except TwilioRestException as e:
+                logging.exception(e)
 
 
 def notify_twilio_available_locations(locations):
-    send_message_to_twilio(format_available_message(locations))
+    for location in locations:
+        send_message_to_twilio(format_available_message(location))
 
 
 def notify_twilio_unavailable_locations(locations):
-    send_message_to_twilio(format_unavailable_message(locations))
+    for location in locations:
+        send_message_to_twilio(format_unavailable_message(location))
