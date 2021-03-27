@@ -10,34 +10,25 @@ from clinics.hyvee import HyVee
 from clinics.test_clinic import TestClinic
 from clinics.walgreens import Walgreens
 from clinics.walmart import Walmart
-from constants import TRUE_VALUES
 from notify import notify_available, notify_unavailable
+from utils import env_var_is_true
 
 redis_client = redis.Redis.from_url(os.environ["REDIS_URL"])
 
 enabled_clinics = []
-if "ENABLE_BALLS" in os.environ and os.environ["ENABLE_BALLS"].lower() in TRUE_VALUES:
+if env_var_is_true("ENABLE_BALLS"):
     enabled_clinics.append(Balls())
-if (
-    "ENABLE_COSENTINOS" in os.environ
-    and os.environ["ENABLE_COSENTINOS"].lower() in TRUE_VALUES
-):
+if env_var_is_true("ENABLE_COSENTINOS"):
     enabled_clinics.append(Cosentinos())
-if "ENABLE_CVS" in os.environ and os.environ["ENABLE_CVS"].lower() in TRUE_VALUES:
+if env_var_is_true("ENABLE_CVS"):
     enabled_clinics.append(CVS())
-if "ENABLE_HYVEE" in os.environ and os.environ["ENABLE_HYVEE"].lower() in TRUE_VALUES:
+if env_var_is_true("ENABLE_HYVEE"):
     enabled_clinics.append(HyVee())
-if (
-    "ENABLE_WALGREENS" in os.environ
-    and os.environ["ENABLE_WALGREENS"].lower() in TRUE_VALUES
-):
+if env_var_is_true("ENABLE_WALGREENS"):
     enabled_clinics.append(Walgreens())
-if (
-    "ENABLE_WALMART" in os.environ
-    and os.environ["ENABLE_WALMART"].lower() in TRUE_VALUES
-):
+if env_var_is_true("ENABLE_WALMART"):
     enabled_clinics.append(Walmart())
-if "ENABLE_TEST" in os.environ and os.environ["ENABLE_TEST"].lower() in TRUE_VALUES:
+if env_var_is_true("ENABLE_TEST"):
     enabled_clinics.append(TestClinic())
 
 # If already notified for a location, don't notify again.

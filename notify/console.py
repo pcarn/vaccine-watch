@@ -2,8 +2,6 @@ import json
 import logging
 import os
 
-from constants import TRUE_VALUES
-
 states = json.loads(os.environ["STATES"])
 
 

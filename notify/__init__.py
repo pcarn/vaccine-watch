@@ -1,6 +1,6 @@
 import os
 
-from constants import TRUE_VALUES
+from utils import env_var_is_true
 
 from .console import (
     notify_console_available_locations,
@@ -30,10 +30,7 @@ def notify_available(locations):
         notify_discord_available_locations(locations)
     if "TWILIO_AUTH_TOKEN" in os.environ:
         notify_twilio_available_locations(locations)
-    if (
-        "NOTIFY_CONSOLE" in os.environ
-        and os.environ["NOTIFY_CONSOLE"].lower() in TRUE_VALUES
-    ):
+    if env_var_is_true("NOTIFY_CONSOLE"):
         notify_console_available_locations(locations)
 
 
@@ -46,8 +43,5 @@ def notify_unavailable(locations):
         notify_discord_unavailable_locations(locations)
     if "TWILIO_AUTH_TOKEN" in os.environ:
         notify_twilio_unavailable_locations(locations)
-    if (
-        "NOTIFY_CONSOLE" in os.environ
-        and os.environ["NOTIFY_CONSOLE"].lower() in TRUE_VALUES
-    ):
+    if env_var_is_true("NOTIFY_CONSOLE"):
         notify_console_unavailable_locations(locations)

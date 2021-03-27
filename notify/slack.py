@@ -5,14 +5,12 @@ import os
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-from constants import TRUE_VALUES
-
 states = json.loads(os.environ["STATES"])
 
 
 def format_available_message(locations):
     message = ":large_green_circle: {}Vaccine appointments available at {} location{}:".format(
-        "<!channel> " if os.environ["SLACK_TAG_CHANNEL"].lower() in TRUE_VALUES else "",
+        "<!channel> " if env_var_is_true("SLACK_TAG_CHANNEL") else "",
         "these" if len(locations) > 1 else "this",
         "s" if len(locations) > 1 else "",
     )
