@@ -1,8 +1,3 @@
-import os
-
-from utils import env_var_is_true
-
-
 class NotificationMethod:
     """
     Base class for notification methods.

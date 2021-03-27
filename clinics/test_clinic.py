@@ -2,7 +2,6 @@ from . import Clinic
 
 
 class TestClinic(Clinic):
-
     location_a = {
         "link": "https://testlocations.fake/signup/location-a",
         "id": "location-a",
