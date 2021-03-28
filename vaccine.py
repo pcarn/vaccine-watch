@@ -84,6 +84,3 @@ def check_for_appointments():
 
     if len(newly_available_locations) == 0 and len(newly_unavailable_locations) == 0:
         print("nothing to notify")
-
-    for location in newly_unavailable_locations:
-        redis_client.delete("tweet-{}".format(location["id"]))

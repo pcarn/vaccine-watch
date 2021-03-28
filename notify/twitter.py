@@ -48,7 +48,7 @@ class Twitter(NotificationMethod):
                         logging.exception("Error when posting tweet")
                         break
                 except requests.exceptions.ConnectionError:
-                    logging.exception("Connection error when posting tweet")
+                    logging.exception("Connection error when posting tweet, will retry")
                 else:
                     break
             else:
@@ -56,19 +56,32 @@ class Twitter(NotificationMethod):
 
     def notify_unavailable_locations(self, locations):
         for location in locations:
-            try:
-                previous_tweet_id = redis_client.get(
-                    "{}tweet-{}".format(
-                        os.environ.get("CACHE_PREFIX", ""), location["id"]
+            for retry_attempt in range(0, 5):
+                try:
+                    previous_tweet_id = redis_client.get(
+                        "{}tweet-{}".format(
+                            os.environ.get("CACHE_PREFIX", ""), location["id"]
+                        )
                     )
-                )
-                if previous_tweet_id:
-                    self.post_tweet(
-                        format_unavailable_message(location),
-                        in_reply_to_status_id=previous_tweet_id,
+                    if previous_tweet_id:
+                        self.post_tweet(
+                            format_unavailable_message(location),
+                            in_reply_to_status_id=previous_tweet_id,
+                        )
+                except twitter.error.TwitterError:
+                    logging.exception("Error when posting tweet")
+                    break
+                except requests.exceptions.ConnectionError:
+                    logging.exception("Connection error when posting tweet, will retry")
+                else:
+                    redis_client.delete(
+                        "{}tweet-{}".format(
+                            os.environ.get("CACHE_PREFIX", ""), location["id"]
+                        )
                     )
-            except twitter.error.TwitterError:
-                logging.exception("Error when posting tweet")
+                    break
+            else:
+                logging.error("Five consecutive errors when posting tweet")
 
 
 emojis = [None, "😷", "💉", "😷💉", "💉😷"]
