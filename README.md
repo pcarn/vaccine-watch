@@ -74,6 +74,7 @@ Required Environment Variables:
 - `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
 
 Optional Environment Variables:
+- `REQUEST_TIMEOUT`: How long to wait, in seconds, for a response to begin before timing out (optional, defaults to 5 seconds)
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
 - `ENABLE_WALMART`: If you want to check Walmart pharmacies

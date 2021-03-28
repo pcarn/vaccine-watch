@@ -47,7 +47,7 @@ class Twitter(NotificationMethod):
                     else:
                         logging.exception("Error when posting tweet")
                         break
-                except requests.exceptions.ConnectionError:
+                except requests.exceptions.RequestException:
                     logging.exception("Connection error when posting tweet, will retry")
                 else:
                     break
@@ -71,7 +71,7 @@ class Twitter(NotificationMethod):
                 except twitter.error.TwitterError:
                     logging.exception("Error when posting tweet")
                     break
-                except requests.exceptions.ConnectionError:
+                except requests.exceptions.RequestException:
                     logging.exception("Connection error when posting tweet, will retry")
                 else:
                     redis_client.delete(

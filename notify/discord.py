@@ -4,6 +4,8 @@ import os
 
 import requests
 
+from utils import timeout_amount
+
 from . import NotificationMethod
 from .utils import shorten_url
 
@@ -76,8 +78,8 @@ def send_message_to_discord(message):
     webhook_url = os.environ["DISCORD_WEBHOOK_URL"]
     data = {"content": message}
     try:
-        response = requests.post(webhook_url, json=data)
+        response = requests.post(webhook_url, json=data, timeout=timeout_amount)
         response.raise_for_status()
         logging.debug("Message to discord sent successfully")
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.RequestException:
         logging.exception("Error sending message to discord")

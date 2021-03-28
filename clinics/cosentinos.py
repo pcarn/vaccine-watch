@@ -4,6 +4,8 @@ import re
 
 import requests
 
+from utils import timeout_amount
+
 from . import Clinic
 
 
@@ -15,7 +17,7 @@ class Cosentinos(Clinic):
         locations_with_vaccine = []
         locations_without_vaccine = []
 
-        response = requests.get(location_index_url)
+        response = requests.get(location_index_url, timeout=timeout_amount)
 
         try:
             response.raise_for_status()
@@ -35,7 +37,7 @@ class Cosentinos(Clinic):
                 else:
                     locations_without_vaccine.append(location_data)
 
-        except requests.exceptions.HTTPError:
+        except requests.exceptions.RequestException:
             logging.exception(
                 "Bad response from Cosentino's",
             )
@@ -82,12 +84,14 @@ def get_page(location_id, offset):
     payload = "type=&calendar=&month=&skip=true&options%5Boffset%5D={}&options%5BnumDays%5D=5&ignoreAppointment=&appointmentType=&calendarID={}".format(
         offset, location_id
     )
-    response = requests.post(date_url, headers=headers, data=payload)
+    response = requests.post(
+        date_url, headers=headers, data=payload, timeout=timeout_amount
+    )
 
     try:
         response.raise_for_status()
         return response.text
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.RequestException:
         logging.exception(
             "Bad Response from Cosentino's",
         )

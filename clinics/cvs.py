@@ -4,6 +4,8 @@ import os
 
 import requests
 
+from utils import timeout_amount
+
 from . import Clinic
 
 
@@ -20,7 +22,7 @@ class CVS(Clinic):
         locations_with_vaccine = []
         locations_without_vaccine = []
         url = "https://www.cvs.com/immunizations/covid-19-vaccine.vaccine-status.json?vaccineinfo"
-        response = requests.get(url)
+        response = requests.get(url, timeout=timeout_amount)
 
         try:
             response.raise_for_status()
@@ -60,7 +62,7 @@ class CVS(Clinic):
                             state,
                         )
 
-        except requests.exceptions.HTTPError:
+        except requests.exceptions.RequestException:
             logging.exception(
                 "Bad response from CVS",
             )
@@ -75,11 +77,11 @@ class CVS(Clinic):
 # Only report as available if you can register
 def locked_out():
     url = "https://www.cvs.com/vaccine/intake/store/cvd-schedule?icid=coronavirus-lp-vaccine-pa-statetool"
-    response = requests.get(url)
+    response = requests.get(url, timeout=timeout_amount)
     try:
         response.raise_for_status()
         return "Please check back later" in response.text
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.RequestException:
         logging.exception("Bad response from CVS")
         return True  # Locked out if we can't get there
 

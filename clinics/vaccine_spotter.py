@@ -5,6 +5,8 @@ from datetime import datetime
 
 import requests
 
+from utils import timeout_amount
+
 from . import Clinic
 
 
@@ -29,7 +31,9 @@ class VaccineSpotterClinic(Clinic):
         )
 
         for state in self.states:
-            response = requests.get(vaccine_spotter_api_url_template.format(state))
+            response = requests.get(
+                vaccine_spotter_api_url_template.format(state), timeout=timeout_amount
+            )
             try:
                 response.raise_for_status()
                 data = response.json()
@@ -57,7 +61,7 @@ class VaccineSpotterClinic(Clinic):
                         locations_with_vaccine.append(formatted_location)
                     else:
                         locations_without_vaccine.append(formatted_location)
-            except requests.exceptions.HTTPError:
+            except requests.exceptions.RequestException:
                 logging.exception(
                     "Bad response from Vaccine Spotter",
                 )

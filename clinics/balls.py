@@ -6,6 +6,8 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
+from utils import timeout_amount
+
 from . import Clinic
 
 
@@ -57,7 +59,7 @@ def get_location_available(location):
 def get_all_location_data():
     location_index_url = "https://ballsfoodspharmacy.com"
     location_info_regex = '<option value="https:\/\/hipaa.jotform\.com\/(\d{10,20})">(.{1,100}) - .{1,100} - (.{1,100}), (\w{2}) \d{5}<\/option>'
-    response = requests.get(location_index_url)
+    response = requests.get(location_index_url, timeout=timeout_amount)
     try:
         response.raise_for_status()
         locations = re.findall(location_info_regex, response.text)
@@ -83,7 +85,7 @@ def get_all_location_data():
             for location in locations
         ]
 
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.RequestException:
         logging.exception("Bad response from Ball's")
 
         return []
@@ -95,7 +97,7 @@ def timestamp_to_date(timestamp):
 
 def get_available_appointment_dates(location_id):
     url = "https://hipaa.jotform.com/{}".format(location_id)
-    response = requests.get(url)
+    response = requests.get(url, timeout=timeout_amount)
     try:
         response.raise_for_status()
         if "All appointments have been filled" in response.text:
@@ -104,7 +106,7 @@ def get_available_appointment_dates(location_id):
         form_url = "https://hipaa.jotform.com/server.php?action=getAppointments&formID={}&timezone=America%2FChicago%20(GMT-06%3A00)&ncTz=1615050226593&firstAvailableDates".format(
             location_id
         )
-        response = requests.get(form_url)
+        response = requests.get(form_url, timeout=timeout_amount)
         response.raise_for_status()
         data = response.json()["content"]
         if "47" in data:
@@ -116,6 +118,6 @@ def get_available_appointment_dates(location_id):
         else:
             logging.error("47 not in Balls data: keys are %s", data.keys())
             return None
-    except requests.exceptions.HTTPError:
+    except requests.exceptions.RequestException:
         logging.exception("Bad response from Ball's")
         return None
