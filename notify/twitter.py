@@ -72,7 +72,11 @@ class Twitter(NotificationMethod):
                     logging.exception("Error when posting tweet")
                     break
                 except (requests.exceptions.RequestException, ConnectionResetError):
-                    logging.exception("Connection error when posting tweet, will retry")
+                    logging.exception(
+                        "Connection error when posting tweet{}".format(
+                            ", will retry" if retry_attempt < 4 else ""
+                        )
+                    )
                 else:
                     redis_client.delete(
                         "{}tweet-{}".format(
