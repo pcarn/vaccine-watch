@@ -2,7 +2,7 @@
 Bot to notify when vaccine appointments are available.
 
 Supports checking Hy-Vee, Walgreens, CVS, Walmart, Cosentino's stores (KC), and Ball's stores (KC).
-Supports sending notifications to Slack, Discord, Twilio, and [Twitter](https://twitter.com/kcvaccinewatch).
+Supports sending notifications to Slack, Discord, Microsoft Teams, Twilio, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
 
@@ -40,6 +40,13 @@ Twitter
 1. Click the cog on the channel you want to add the notifications to and select `Edit Channel`
 1. Select the `Integrations` tab and click `Create Webhook`
 1. Enter a `Name` and `Channel` you want the webhook to notify and copy the Webhook URL.
+
+### Microsoft Teams
+1.  In the channel where you want to add the incoming webhook, click ... and then Connectors.
+1.  Search for Incoming Webhook and click Add.
+1.  Give the webhook a name (e.g. Vaccine Watch).
+1.  Click Create.
+1.  A unique webhook URL will be provided for the channel.
 
 ### Twitter
 1. Apply for a [Twitter Developer account](https://developer.twitter.com/en/portal/petition/use-case)
@@ -94,6 +101,9 @@ Optional Environment Variables:
 - Discord:
   - `DISCORD_WEBHOOK_URL`: Discord webhook url for channel.
     - example: `https://discordapp.com/api/webhooks/1234567890/abc123`
+- Microsoft Teams:
+  - `TEAMS_WEBHOOK_URL`: Teams webhook url for channel.
+    - example: `https://company.webhook.office.com/webhookb2/abc123@def456/IncomingWebhook/aaa111/bbb222`
 - Twilio:
   - `TWILIO_ACCOUNT_SID`: Account SID for your twilio account
   - `TWILIO_AUTH_TOKEN`: Auth token for your twilio account
