@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 from utils import timeout_amount
