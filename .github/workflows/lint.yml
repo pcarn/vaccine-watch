@@ -13,6 +13,4 @@ jobs:
       - uses: psf/black@stable
         with:
           args: ". --check"
-      - uses: jamescurtin/isort-action@master
-        with:
-          configuration: "-check-only --diff --profile black"
+      - uses: isort/isort-action@v0.1.0
