@@ -16,4 +16,3 @@ jobs:
       - uses: jamescurtin/isort-action@master
         with:
           configuration: "-check-only --diff --profile black"
-          requirementsFiles: "requirements.txt"
