@@ -12,6 +12,7 @@ from clinics.walmart import Walmart
 from notify.console import Console
 from notify.discord import Discord
 from notify.slack import Slack
+from notify.teams import Teams
 from notify.twilio import Twilio
 from notify.twitter import Twitter
 from utils import env_var_is_true
@@ -41,6 +42,8 @@ if "DISCORD_WEBHOOK_URL" in os.environ:
     enabled_notification_methods.append(Discord())
 if "SLACK_BOT_TOKEN" in os.environ:
     enabled_notification_methods.append(Slack())
+if "TEAMS_WEBHOOK_URL" in os.environ:
+    enabled_notification_methods.append(Teams())
 if "TWILIO_AUTH_TOKEN" in os.environ:
     enabled_notification_methods.append(Twilio())
 if "TWITTER_CONSUMER_KEY" in os.environ:
