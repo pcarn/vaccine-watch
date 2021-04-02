@@ -4,7 +4,6 @@ import re
 from datetime import datetime
 
 import requests
-from bs4 import BeautifulSoup
 
 from utils import timeout_amount
 
@@ -53,7 +52,7 @@ class Balls(Clinic):
 
 
 def get_location_available(location):
-    return location["enabled"] and len(location["available_appointment_dates"]) > 0
+    return len(location["available_appointment_dates"]) > 0
 
 
 def get_all_location_data():
@@ -66,9 +65,6 @@ def get_all_location_data():
             ", Kansas City", " - Kansas City"
         )  # Correct inconsistency
         locations = re.findall(location_info_regex, response_body)
-        page_data = BeautifulSoup(response_body, "html.parser")
-        # The site used to have other options in the list commented. It seems they're just missing from the DOM now.
-        enabled_options = page_data.find_all("option")
 
         return [
             {
@@ -77,9 +73,6 @@ def get_all_location_data():
                 ),
                 "name": "{} {}".format(location[1], location[2]),
                 "state": location[3],
-                "enabled": any(
-                    [location[0] in str(option) for option in enabled_options]
-                ),
                 "link": "https://hipaa.jotform.com/{}".format(location[0]),
                 "available_appointment_dates": get_available_appointment_dates(
                     location[0]

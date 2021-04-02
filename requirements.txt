@@ -1,5 +1,4 @@
 APScheduler==3.7.0
-beautifulsoup4==4.9.3
 geopy==2.1.0
 python-twitter==3.5
 redis==3.5.3
