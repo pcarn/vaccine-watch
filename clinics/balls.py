@@ -62,8 +62,11 @@ def get_all_location_data():
     response = requests.get(location_index_url, timeout=timeout_amount)
     try:
         response.raise_for_status()
-        locations = re.findall(location_info_regex, response.text)
-        page_data = BeautifulSoup(response.text, "html.parser")
+        response_body = response.text.replace("â\x80\x93", "-").replace(
+            ", Kansas City", " - Kansas City"
+        )  # Correct inconsistency
+        locations = re.findall(location_info_regex, response_body)
+        page_data = BeautifulSoup(response_body, "html.parser")
         # The site used to have other options in the list commented. It seems they're just missing from the DOM now.
         enabled_options = page_data.find_all("option")
 
