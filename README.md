@@ -83,6 +83,7 @@ Required Environment Variables:
 Optional Environment Variables:
 - `REQUEST_TIMEOUT`: How long to wait, in seconds, for a response to begin before timing out (optional, defaults to 5 seconds)
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
+- `ENABLE_HEALTH_MART`: If you want to check HealthMart pharmacies
 - `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
 - `ENABLE_WALMART`: If you want to check Walmart pharmacies
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)

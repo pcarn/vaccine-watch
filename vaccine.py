@@ -5,6 +5,7 @@ import redis
 from clinics.balls import Balls
 from clinics.cosentinos import Cosentinos
 from clinics.cvs import CVS
+from clinics.health_mart import HealthMart
 from clinics.hyvee import HyVee
 from clinics.test_clinic import TestClinic
 from clinics.walgreens import Walgreens
@@ -26,6 +27,8 @@ if env_var_is_true("ENABLE_COSENTINOS"):
     enabled_clinics.append(Cosentinos())
 if env_var_is_true("ENABLE_CVS"):
     enabled_clinics.append(CVS())
+if env_var_is_true("ENABLE_HEALTH_MART"):
+    enabled_clinics.append(HealthMart())
 if env_var_is_true("ENABLE_HYVEE"):
     enabled_clinics.append(HyVee())
 if env_var_is_true("ENABLE_WALGREENS"):
