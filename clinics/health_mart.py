@@ -43,7 +43,7 @@ class HealthMart(VaccineSpotterClinic):
             "id": "{}health_mart-{}".format(
                 os.environ.get("CACHE_PREFIX", ""), location["properties"]["id"]
             ),
-            "name": "Health Mart {}".format(location["properties"]["name"]),
+            "name": "Health Mart - {}".format(location["properties"]["name"]),
             "state": location["properties"]["state"],
             "zip": location["properties"]["postal_code"],
             "appointments_last_fetched": appointments_last_fetched,
