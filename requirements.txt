@@ -4,4 +4,4 @@ python-twitter==3.5
 redis==3.5.3
 requests==2.25.1
 slack-sdk==3.4.2
-twilio==6.55.0
+twilio==6.56.0
