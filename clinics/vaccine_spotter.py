@@ -4,24 +4,71 @@ import os
 from datetime import datetime
 
 import requests
+from geopy.distance import distance
+from pytz import timezone
 
 from utils import timeout_amount
 
 from . import Clinic
 
+# These are blocked because they're implemented separately in this repo, and check more often
+PROVIDER_BRAND_BLOCK_LIST = ["cvs", "hyvee"]
 
-class VaccineSpotterClinic(Clinic):
+
+class VaccineSpotter(Clinic):
     def __init__(self):
+        self.here = (os.environ["LATITUDE"], os.environ["LONGITUDE"])
         self.states = json.loads(os.environ["STATES"])
 
     # Takes a dict of location data from the API (data['features'])
     # returns True or False, if location should be included
     def should_include_location(self, location):
-        raise NotImplementedError()
+        coordinates = location["geometry"]["coordinates"]
+        longitude, latitude = coordinates
+
+        return location["properties"][
+            "provider_brand"
+        ] not in PROVIDER_BRAND_BLOCK_LIST and distance(
+            self.here, (latitude, longitude)
+        ).miles < int(
+            os.environ["RADIUS"]
+        )
 
     # Formats the data into the return format (dict)
-    def format_data(location):
-        raise NotImplementedError()
+    def format_data(self, location):
+        zone = os.environ.get("TIMEZONE", "US/Central")
+        try:
+            if location["properties"]["appointments_last_fetched"]:
+                appointments_last_fetched = (
+                    datetime.fromisoformat(
+                        location["properties"]["appointments_last_fetched"]
+                    )
+                    .astimezone(timezone(zone))
+                    .strftime("%-I:%M")
+                )
+            else:
+                appointments_last_fetched = None
+        except (
+            ValueError,
+            TypeError,
+        ) as e:  # Python doesn't like 2 digits for decimal fraction of second
+            appointments_last_fetched = None
+
+        return {
+            "link": location["properties"]["url"],
+            "id": "{}{}-{}".format(
+                os.environ.get("CACHE_PREFIX", ""),
+                location["properties"]["provider_brand"],
+                location["properties"]["id"],
+            ),
+            "name": "{} {}".format(
+                location["properties"]["provider_brand_name"],
+                location["properties"]["name"],
+            ),
+            "state": location["properties"]["state"],
+            "zip": location["properties"]["postal_code"],
+            "appointments_last_fetched": appointments_last_fetched,
+        }
 
     def get_locations(self):
         locations_with_vaccine = []

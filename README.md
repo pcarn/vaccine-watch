@@ -1,7 +1,7 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, Walgreens, CVS, Walmart, Cosentino's stores (KC), Ball's stores (KC), and Rapid Test KC.
+Supports checking Hy-Vee, CVS, Cosentino's stores (KC), Ball's stores (KC), Rapid Test KC, and locations checked by [VaccineSpotter](https://vaccinespotter.org).
 Supports sending notifications to Slack, Discord, Microsoft Teams, Twilio, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
@@ -9,8 +9,6 @@ Notifications are sent when a location has appointments. No more notifications a
 PRs welcome to support other clinics or notification methods.
 
 This project has no affiliation with any of the clinics mentioned.
-
-Walmart and Walgreens data courtesy of [covid-vaccine-spotter](https://github.com/GUI/covid-vaccine-spotter).
 
 ## Example
 Slack
@@ -85,10 +83,8 @@ Optional Environment Variables:
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
-- `ENABLE_HEALTH_MART`: If you want to check HealthMart pharmacies
+- `ENABLE_VACCINE_SPOTTER`: If you want to check locations checked by [VaccineSpotter](https://vaccinespotter.org) (Excluding CVS and Hy-Vee)
 - `ENABLE_RAPID_TEST_KC`: Iff you want to check Rapid Test KC (Kansas City only)
-- `ENABLE_WALGREENS`: If you want to check Walgreens pharmacies
-- `ENABLE_WALMART`: If you want to check Walmart pharmacies
 - CVS:
   - `ENABLE_CVS`: If you want to check CVS pharmacies
   - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for.

@@ -5,12 +5,10 @@ import redis
 from clinics.balls import Balls
 from clinics.cosentinos import Cosentinos
 from clinics.cvs import CVS
-from clinics.health_mart import HealthMart
 from clinics.hyvee import HyVee
 from clinics.rapid_test_kc import RapidTestKC
 from clinics.test_clinic import TestClinic
-from clinics.walgreens import Walgreens
-from clinics.walmart import Walmart
+from clinics.vaccine_spotter import VaccineSpotter
 from notify.console import Console
 from notify.discord import Discord
 from notify.slack import Slack
@@ -28,16 +26,12 @@ if env_var_is_true("ENABLE_COSENTINOS"):
     enabled_clinics.append(Cosentinos())
 if env_var_is_true("ENABLE_CVS"):
     enabled_clinics.append(CVS())
-if env_var_is_true("ENABLE_HEALTH_MART"):
-    enabled_clinics.append(HealthMart())
 if env_var_is_true("ENABLE_HYVEE"):
     enabled_clinics.append(HyVee())
 if env_var_is_true("ENABLE_RAPID_TEST_KC"):
     enabled_clinics.append(RapidTestKC())
-if env_var_is_true("ENABLE_WALGREENS"):
-    enabled_clinics.append(Walgreens())
-if env_var_is_true("ENABLE_WALMART"):
-    enabled_clinics.append(Walmart())
+if env_var_is_true("ENABLE_VACCINE_SPOTTER"):
+    enabled_clinics.append(VaccineSpotter())
 if env_var_is_true("ENABLE_TEST"):
     enabled_clinics.append(TestClinic())
 
