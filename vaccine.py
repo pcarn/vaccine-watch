@@ -7,6 +7,7 @@ from clinics.cosentinos import Cosentinos
 from clinics.cvs import CVS
 from clinics.health_mart import HealthMart
 from clinics.hyvee import HyVee
+from clinics.rapid_test_kc import RapidTestKC
 from clinics.test_clinic import TestClinic
 from clinics.walgreens import Walgreens
 from clinics.walmart import Walmart
@@ -31,6 +32,8 @@ if env_var_is_true("ENABLE_HEALTH_MART"):
     enabled_clinics.append(HealthMart())
 if env_var_is_true("ENABLE_HYVEE"):
     enabled_clinics.append(HyVee())
+if env_var_is_true("ENABLE_RAPID_TEST_KC"):
+    enabled_clinics.append(RapidTestKC())
 if env_var_is_true("ENABLE_WALGREENS"):
     enabled_clinics.append(Walgreens())
 if env_var_is_true("ENABLE_WALMART"):
