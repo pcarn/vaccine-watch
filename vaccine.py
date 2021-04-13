@@ -64,9 +64,18 @@ def check_for_appointments():
         unavailable_locations += response["without_vaccine"]
 
     for location in available_locations:
-        if redis_client.get(location["id"]) is None:
+        cache_value = redis_client.get(location["id"])
+        if cache_value is None or (
+            location.get("latest_appointment_day")
+            and cache_value.decode("utf-8")
+            != location[
+                "latest_appointment_day"
+            ]  # There's a new day we haven't notified for
+        ):
             newly_available_locations.append(location)
-            redis_client.set(location["id"], "notified")
+            redis_client.set(
+                location["id"], location.get("latest_appointment_day", "notified")
+            )
 
     for location in unavailable_locations:
         deleted = redis_client.delete(location["id"])
