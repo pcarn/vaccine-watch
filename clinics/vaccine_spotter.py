@@ -82,7 +82,7 @@ class VaccineSpotter(Clinic):
             "appointments_last_fetched": appointments_last_fetched,
         }
 
-        if "postal_code" in location["properties"]:
+        if location["properties"]["postal_code"]:
             formatted_data["zip"] = location["properties"]["postal_code"]
         return formatted_data
 
