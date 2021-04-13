@@ -61,9 +61,15 @@ class VaccineSpotter(Clinic):
                 location["properties"]["provider_brand"],
                 location["properties"]["id"],
             ),
-            "name": "{} {}".format(
+            "name": "{} {} {}".format(
                 location["properties"]["provider_brand_name"],
                 location["properties"]["name"],
+                " ".join(
+                    [
+                        word.capitalize()
+                        for word in location["properties"]["city"].split(" ")
+                    ]
+                ),
             ),
             "state": location["properties"]["state"],
             "zip": location["properties"]["postal_code"],
