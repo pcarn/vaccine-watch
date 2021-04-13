@@ -63,7 +63,7 @@ def check_for_appointments():
     for location in available_locations:
         cache_value = redis_client.get(location["id"])
         if cache_value is None or (
-            location.get("latest_appointment_day")
+            "latest_appointment_day" in location
             and cache_value.decode("utf-8")
             != location[
                 "latest_appointment_day"

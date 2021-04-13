@@ -54,7 +54,7 @@ class VaccineSpotter(Clinic):
         ) as e:  # Python doesn't like 2 digits for decimal fraction of second
             appointments_last_fetched = None
 
-        return {
+        formatted_data = {
             "link": location["properties"]["url"],
             "id": "{}{}-{}".format(
                 os.environ.get("CACHE_PREFIX", ""),
@@ -68,7 +68,8 @@ class VaccineSpotter(Clinic):
                 not in [
                     "costco",
                     "walgreens",
-                ]  # Avoid duplicate "Walgreens Walgreen Drug Store" or "Costco Lenexa Lenexa"
+                    "cvs",
+                ]  # Avoid "Walgreens Walgreen Drug Store" or "Costco Lenexa Lenexa" or "CVS Kansas City, MO Kansas City."
                 else "-",
                 " ".join(
                     [
@@ -78,9 +79,12 @@ class VaccineSpotter(Clinic):
                 ),
             ),
             "state": location["properties"]["state"],
-            "zip": location["properties"]["postal_code"],
             "appointments_last_fetched": appointments_last_fetched,
         }
+
+        if "postal_code" in location["properties"]:
+            formatted_data["zip"] = location["properties"]["postal_code"]
+        return formatted_data
 
     def get_locations(self):
         locations_with_vaccine = []
