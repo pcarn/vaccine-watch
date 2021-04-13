@@ -12,7 +12,7 @@ from utils import timeout_amount
 from . import Clinic
 
 # These are blocked because they're implemented separately in this repo, and check more often
-PROVIDER_BRAND_BLOCK_LIST = ["cvs", "hyvee"]
+PROVIDER_BRAND_BLOCK_LIST = ["hyvee"]
 
 
 class VaccineSpotter(Clinic):

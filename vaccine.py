@@ -4,7 +4,6 @@ import redis
 
 from clinics.balls import Balls
 from clinics.cosentinos import Cosentinos
-from clinics.cvs import CVS
 from clinics.hyvee import HyVee
 from clinics.rapid_test_kc import RapidTestKC
 from clinics.test_clinic import TestClinic
@@ -24,8 +23,6 @@ if env_var_is_true("ENABLE_BALLS"):
     enabled_clinics.append(Balls())
 if env_var_is_true("ENABLE_COSENTINOS"):
     enabled_clinics.append(Cosentinos())
-if env_var_is_true("ENABLE_CVS"):
-    enabled_clinics.append(CVS())
 if env_var_is_true("ENABLE_HYVEE"):
     enabled_clinics.append(HyVee())
 if env_var_is_true("ENABLE_RAPID_TEST_KC"):

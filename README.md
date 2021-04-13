@@ -1,7 +1,7 @@
 # Vaccine Watch
 Bot to notify when vaccine appointments are available.
 
-Supports checking Hy-Vee, CVS, Cosentino's stores (KC), Ball's stores (KC), Rapid Test KC, and locations checked by [VaccineSpotter](https://vaccinespotter.org).
+Supports checking Hy-Vee, Cosentino's stores (KC), Ball's stores (KC), Rapid Test KC, and locations checked by [VaccineSpotter](https://vaccinespotter.org) (including Walmart, Walgreens, CVS, Costco).
 Supports sending notifications to Slack, Discord, Microsoft Teams, Twilio, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
@@ -73,7 +73,6 @@ Required Environment Variables:
 - `REDIS_URL`: A redis service
 - `VACCINE_CHECK_INTERVAL`: How often (in seconds) to check
 - `RADIUS`: Within how many miles to check
-  - CVS has a maximum of 25, vaccine-watch will use 25 for CVS if you set this higher.
 - `LATITUDE`: Latitude of the location to check (e.g. `39.1040382`)
 - `LONGITUDE`: Latitude of the location to check (e.g. `-94.5701803`)
 - `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
@@ -83,15 +82,8 @@ Optional Environment Variables:
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
-- `ENABLE_VACCINE_SPOTTER`: If you want to check locations checked by [VaccineSpotter](https://vaccinespotter.org) (Excluding CVS and Hy-Vee)
+- `ENABLE_VACCINE_SPOTTER`: If you want to check locations checked by [VaccineSpotter](https://vaccinespotter.org) (Excluding Hy-Vee)
 - `ENABLE_RAPID_TEST_KC`: Iff you want to check Rapid Test KC (Kansas City only)
-- CVS:
-  - `ENABLE_CVS`: If you want to check CVS pharmacies
-  - `CVS_ALLOW_LIST`: JSON of states and cities to be notified for.
-    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
-  - `CVS_BLOCK_LIST`: (optional): JSON of states and cities to not be warned about new city for.
-    - example: `{"MO": ["SAINT LOUIS"], "KS": []}`
-  - Any city that CVS returns for the state(s) in `STATES` that are not listed in either the allow or block list will cause a warning message to be logged. Then it may be added to the allow or block list depending on if you wish to have the locations in that city checked or not checked.
 - Slack:
   - `SLACK_BOT_TOKEN`: Token for your slack integration
   - `SLACK_TAG_CHANNEL`: If the channel should be tagged when appointments are available
