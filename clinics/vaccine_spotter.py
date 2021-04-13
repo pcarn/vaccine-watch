@@ -63,7 +63,10 @@ class VaccineSpotter(Clinic):
             ),
             "name": "{} {} {}".format(
                 location["properties"]["provider_brand_name"],
-                location["properties"]["name"],
+                location["properties"]["name"]
+                if location["properties"]["provider_brand"]
+                != "walgreens"  # Avoid duplicate "Walgreens Walgreen Drug Store"
+                else "",
                 " ".join(
                     [
                         word.capitalize()
