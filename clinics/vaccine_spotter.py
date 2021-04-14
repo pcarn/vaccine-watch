@@ -56,8 +56,7 @@ class VaccineSpotter(Clinic):
 
         formatted_data = {
             "link": location["properties"]["url"],
-            "id": "{}{}-{}".format(
-                os.environ.get("CACHE_PREFIX", ""),
+            "id": "{}-{}".format(
                 location["properties"]["provider_brand"],
                 location["properties"]["id"],
             ),

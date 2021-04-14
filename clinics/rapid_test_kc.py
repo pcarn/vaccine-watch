@@ -47,7 +47,7 @@ class RapidTestKC(Clinic):
 
         location = {
             "link": "https://www.vaccinekansascity.com/schedule-your-vaccine",
-            "id": "{}rapidtestkc".format(os.environ.get("CACHE_PREFIX", "")),
+            "id": "rapidtestkc",
             "name": "Rapid Test KC - Overland Park",
             "state": "KS",
         }

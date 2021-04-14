@@ -48,6 +48,10 @@ if "TWITTER_CONSUMER_KEY" in os.environ:
     enabled_notification_methods.append(Twitter())
 
 
+def cache_key(location):
+    return "{}{}".format(os.environ.get("CACHE_PREFIX", ""), location["id"])
+
+
 # If already notified for a location, don't notify again.
 # When a location doesn't have vaccines, reset to not notified.
 def check_for_appointments():
@@ -62,7 +66,7 @@ def check_for_appointments():
         unavailable_locations += response["without_vaccine"]
 
     for location in available_locations:
-        cache_value = redis_client.get(location["id"])
+        cache_value = redis_client.get(cache_key(location))
         if cache_value is None or (
             "latest_appointment_day" in location
             and cache_value.decode("utf-8")
@@ -72,12 +76,12 @@ def check_for_appointments():
         ):
             newly_available_locations.append(location)
             redis_client.set(
-                location["id"], location.get("latest_appointment_day", "notified")
+                cache_key(location), location.get("latest_appointment_day", "notified")
             )
             # Reset Walgreens unavailability timer
             if "walgreens" in location["id"]:
-                first_unavailable_cache_key = "first-unavailable-{}".format(
-                    location["id"]
+                first_unavailable_cache_key = "{}first-unavailable-{}".format(
+                    os.environ.get("CACHE_PREFIX", ""), location["id"]
                 )
                 deleted = redis_client.delete(first_unavailable_cache_key)
                 if deleted == 1:
@@ -86,21 +90,21 @@ def check_for_appointments():
     for location in unavailable_locations:
         # Don't treat Walgreens as unavailable until it has been for 5 minutes
         if "walgreens" in location["id"]:
-            if redis_client.get(location["id"]):
-                first_unavailable_cache_key = "first-unavailable-{}".format(
-                    location["id"]
+            if redis_client.get(cache_key(location)):
+                first_unavailable_cache_key = "{}first-unavailable-{}".format(
+                    os.environ.get("CACHE_PREFIX", ""), location["id"]
                 )
                 first_unavailable_time = redis_client.get(first_unavailable_cache_key)
                 if first_unavailable_time:
                     if int(time.time()) - int(first_unavailable_time) > 300:
                         redis_client.delete(first_unavailable_cache_key)
-                        redis_client.delete(location["id"])
+                        redis_client.delete(cache_key(location))
                         newly_unavailable_locations.append(location)
                 else:
                     print("Walgreens says unavailable, going to wait before notifying")
                     redis_client.set(first_unavailable_cache_key, int(time.time()))
         else:
-            deleted = redis_client.delete(location["id"])
+            deleted = redis_client.delete(cache_key(location))
             if deleted == 1:
                 newly_unavailable_locations.append(location)
 
