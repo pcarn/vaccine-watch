@@ -88,7 +88,7 @@ def check_for_appointments():
                 print("False alarm on Walgreens unavailability")
 
     for location in unavailable_locations:
-        # Don't treat Walgreens as unavailable until it has been for 5 minutes
+        # Don't treat Walgreens as unavailable until it has been for 4.5 minutes
         if "walgreens" in location["id"]:
             if redis_client.get(cache_key(location)):
                 first_unavailable_cache_key = "{}first-unavailable-{}".format(
@@ -96,7 +96,7 @@ def check_for_appointments():
                 )
                 first_unavailable_time = redis_client.get(first_unavailable_cache_key)
                 if first_unavailable_time:
-                    if int(time.time()) - int(first_unavailable_time) > 300:
+                    if int(time.time()) - int(first_unavailable_time) > 270:
                         redis_client.delete(first_unavailable_cache_key)
                         redis_client.delete(cache_key(location))
                         newly_unavailable_locations.append(location)
