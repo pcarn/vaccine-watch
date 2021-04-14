@@ -34,19 +34,16 @@ class Twitter(NotificationMethod):
         for location in locations:
             for retry_attempt in range(0, 5):
                 try:
+                    previous_tweet_id = redis_client.get(self.cache_key(location))
                     response = self.post_tweet(
-                        format_available_message(location, retry_attempt)
+                        format_available_message(location, retry_attempt),
+                        in_reply_to_status_id=previous_tweet_id,
                     )
                     logging.debug("Message to twitter delivered successfully")
 
-                    old_cache_value = redis_client.get(self.cache_key(location))
-                    new_cache_value = "{},{}".format(  # Append to existing value
-                        (old_cache_value.decode("utf-8") if old_cache_value else ""),
-                        response.id,
-                    )
                     redis_client.set(
                         self.cache_key(location),
-                        new_cache_value,
+                        response.id,
                     )
                 except twitter.error.TwitterError as exception:
                     if retry_attempt < 4 and exception.message[0]["code"] == 187:
@@ -65,16 +62,12 @@ class Twitter(NotificationMethod):
         for location in locations:
             for retry_attempt in range(0, 5):
                 try:
-                    cache_value = redis_client.get(self.cache_key(location))
-                    previous_tweet_ids = (
-                        cache_value.decode("utf-8") if cache_value else ""
-                    ).split(",")
-                    for previous_tweet_id in previous_tweet_ids:
-                        if previous_tweet_id:
-                            self.post_tweet(
-                                format_unavailable_message(location),
-                                in_reply_to_status_id=previous_tweet_id,
-                            )
+                    previous_tweet_id = redis_client.get(self.cache_key(location))
+                    if previous_tweet_id:
+                        self.post_tweet(
+                            format_unavailable_message(location),
+                            in_reply_to_status_id=previous_tweet_id,
+                        )
                 except twitter.error.TwitterError:
                     logging.exception("Error when posting tweet")
                     break
@@ -88,6 +81,7 @@ class Twitter(NotificationMethod):
                     redis_client.delete(self.cache_key(location))
                     break
             else:
+                redis_client.delete(self.cache_key(location))
                 logging.error("Five consecutive errors when posting tweet")
 
 
