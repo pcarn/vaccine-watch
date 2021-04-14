@@ -1,4 +1,5 @@
 import os
+import time
 
 import redis
 
@@ -73,11 +74,35 @@ def check_for_appointments():
             redis_client.set(
                 location["id"], location.get("latest_appointment_day", "notified")
             )
+            # Reset Walgreens unavailability timer
+            if "walgreens" in location["id"]:
+                first_unavailable_cache_key = "first-unavailable-{}".format(
+                    location["id"]
+                )
+                deleted = redis_client.delete(first_unavailable_cache_key)
+                if deleted == 1:
+                    print("False alarm on Walgreens unavailability")
 
     for location in unavailable_locations:
-        deleted = redis_client.delete(location["id"])
-        if deleted == 1:
-            newly_unavailable_locations.append(location)
+        # Don't treat Walgreens as unavailable until it has been for 5 minutes
+        if "walgreens" in location["id"]:
+            if redis_client.get(location["id"]):
+                first_unavailable_cache_key = "first-unavailable-{}".format(
+                    location["id"]
+                )
+                first_unavailable_time = redis_client.get(first_unavailable_cache_key)
+                if first_unavailable_time:
+                    if int(time.time()) - int(first_unavailable_time) > 300:
+                        redis_client.delete(first_unavailable_cache_key)
+                        redis_client.delete(location["id"])
+                        newly_unavailable_locations.append(location)
+                else:
+                    print("Walgreens says unavailable, going to wait before notifying")
+                    redis_client.set(first_unavailable_cache_key, int(time.time()))
+        else:
+            deleted = redis_client.delete(location["id"])
+            if deleted == 1:
+                newly_unavailable_locations.append(location)
 
     if len(newly_available_locations) > 0:
         print("{} newly available locations".format(len(newly_available_locations)))
