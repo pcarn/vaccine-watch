@@ -24,11 +24,11 @@ class HyVee(Clinic):
             },
             "query": "query SearchPharmaciesNearPointWithCovidVaccineAvailability($latitude: Float\u0021, $longitude: Float\u0021, $radius: Int\u0021) {searchPharmaciesNearPoint(latitude: $latitude, longitude: $longitude, radius: $radius) {location {locationId name isCovidVaccineAvailable address {state zip}}}}",
         }
-        response = requests.post(
-            HYVEE_URL, headers=HEADERS, json=payload, timeout=timeout_amount
-        )
 
         try:
+            response = requests.post(
+                HYVEE_URL, headers=HEADERS, json=payload, timeout=timeout_amount
+            )
             response.raise_for_status()
             locations = response.json()["data"]["searchPharmaciesNearPoint"]
             if isinstance(locations, list):
@@ -49,7 +49,6 @@ class HyVee(Clinic):
                 logging.warning("Bad response from Hy-Vee, no list in response")
                 locations_with_vaccine = []
                 locations_without_vaccine = []
-
         except requests.exceptions.RequestException:
             logging.exception("Bad response from Hy-Vee")
             locations_with_vaccine = []
@@ -67,11 +66,11 @@ def get_available_manufacturer_ids(location_id):
         "variables": {"locationId": location_id},
         "query": "query GetCovidVaccineLocationAvailability($locationId: ID\u0021) {getCovidVaccineLocationAvailability(locationId: $locationId) { covidVaccineManufacturerId hasAvailability }}",
     }
-    response = requests.post(
-        HYVEE_URL, headers=HEADERS, json=payload, timeout=timeout_amount
-    )
 
     try:
+        response = requests.post(
+            HYVEE_URL, headers=HEADERS, json=payload, timeout=timeout_amount
+        )
         response.raise_for_status()
         data = response.json()["data"]["getCovidVaccineLocationAvailability"]
         if isinstance(data, list):
@@ -98,11 +97,10 @@ def get_available_appointment_times(location_id, manufacturer_id):
         "query": "query GetCovidVaccineTimeSlots($locationId: ID!, $covidVaccineManufacturerId: ID!) { getCovidVaccineTimeSlots(locationId: $locationId, covidVaccineManufacturerId: $covidVaccineManufacturerId)}",
     }
 
-    response = requests.post(
-        HYVEE_URL, headers=HEADERS, json=payload, timeout=timeout_amount
-    )
-
     try:
+        response = requests.post(
+            HYVEE_URL, headers=HEADERS, json=payload, timeout=timeout_amount
+        )
         response.raise_for_status()
         data = response.json().get("data", {}).get("getCovidVaccineTimeSlots")
         if isinstance(data, list):
@@ -111,7 +109,7 @@ def get_available_appointment_times(location_id, manufacturer_id):
             logging.warning("Bad response from Hy-Vee, no list in response")
             return []
     except requests.exceptions.RequestException:
-        logging.error("Bad response from Hy-Vee")
+        logging.exception("Bad response from Hy-Vee")
         return []
 
 

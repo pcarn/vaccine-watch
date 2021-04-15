@@ -93,10 +93,11 @@ class VaccineSpotter(Clinic):
         )
 
         for state in self.states:
-            response = requests.get(
-                vaccine_spotter_api_url_template.format(state), timeout=timeout_amount
-            )
             try:
+                response = requests.get(
+                    vaccine_spotter_api_url_template.format(state),
+                    timeout=timeout_amount,
+                )
                 response.raise_for_status()
                 data = response.json()
 

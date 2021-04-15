@@ -31,10 +31,10 @@ class RapidTestKC(Clinic):
                 "options[qty]": "1",
                 "options[numDays]": "5",
             }
-            response = requests.post(
-                url, params=params, data=data, timeout=timeout_amount
-            )
             try:
+                response = requests.post(
+                    url, params=params, data=data, timeout=timeout_amount
+                )
                 response.raise_for_status()
                 date_regex = (
                     '<div class="date-secondary babel-ignore">([\w\s]{1,10})<\/div>'

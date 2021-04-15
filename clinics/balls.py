@@ -91,8 +91,8 @@ def timestamp_to_date(timestamp):
 
 def get_available_appointment_dates(location_id):
     url = "https://hipaa.jotform.com/{}".format(location_id)
-    response = requests.get(url, timeout=timeout_amount)
     try:
+        response = requests.get(url, timeout=timeout_amount)
         response.raise_for_status()
         if "All appointments have been filled" in response.text:
             return []

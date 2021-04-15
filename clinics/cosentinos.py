@@ -17,9 +17,8 @@ class Cosentinos(Clinic):
         locations_with_vaccine = []
         locations_without_vaccine = []
 
-        response = requests.get(location_index_url, timeout=timeout_amount)
-
         try:
+            response = requests.get(location_index_url, timeout=timeout_amount)
             response.raise_for_status()
             locations = re.findall(location_info_regex, response.text)
             for location in locations:
@@ -84,11 +83,11 @@ def get_page(location_id, offset):
     payload = "type=&calendar=&month=&skip=true&options%5Boffset%5D={}&options%5BnumDays%5D=5&ignoreAppointment=&appointmentType=&calendarID={}".format(
         offset, location_id
     )
-    response = requests.post(
-        date_url, headers=headers, data=payload, timeout=timeout_amount
-    )
 
     try:
+        response = requests.post(
+            date_url, headers=headers, data=payload, timeout=timeout_amount
+        )
         response.raise_for_status()
         return response.text
     except requests.exceptions.RequestException:
