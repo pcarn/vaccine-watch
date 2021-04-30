@@ -112,6 +112,7 @@ class VaccineSpotter(Clinic):
                         appointment_times = [
                             appointment["time"]
                             for appointment in location["properties"]["appointments"]
+                            if "time" in appointment
                         ]
                         if appointment_times:
                             appointment_times.sort()
