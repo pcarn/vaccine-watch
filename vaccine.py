@@ -101,7 +101,11 @@ def check_for_appointments():
                     redis_client.delete(cache_key(location))
                     newly_unavailable_locations.append(location)
             else:
-                print("Walgreens says unavailable, going to wait before notifying")
+                print(
+                    "{} says unavailable, going to wait before notifying".format(
+                        location["name"]
+                    )
+                )
                 redis_client.set(first_unavailable_cache_key, int(time.time()))
         else:
             deleted = redis_client.delete(cache_key(location))
