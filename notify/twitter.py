@@ -98,13 +98,16 @@ def format_available_message(location, retry_attempt):
             day_string = " from {} to {}".format(
                 location["earliest_appointment_day"], location["latest_appointment_day"]
             )
+    elif "appointment_dates" in location:
+        day_string = " on {}".format(", ".join(location["appointment_dates"]))
     else:
         day_string = ""
 
-    return "{}Vaccine appointments available at {}{}. Sign up here{}:\n{}{}{}".format(
+    return "{}{} appointments available at {}{}. Sign up here{}:\n{}{}{}".format(
         "{}: ".format(location["state"])
         if (len(states) > 1 and "state" in location)
         else "",
+        location["test_type"] if "test_type" in location else "Vaccine",
         location["name"],
         day_string,
         ", zip code {}".format(location["zip"]) if "zip" in location else "",
@@ -117,7 +120,8 @@ def format_available_message(location, retry_attempt):
 
 
 def format_unavailable_message(location):
-    return "Vaccine appointments no longer available at {}{}.".format(
+    return "{} appointments no longer available at {}{}.".format(
+        location["test_type"] if "test_type" in location else "Vaccine",
         location["name"],
         " (as of {})".format(location["appointments_last_fetched"])
         if location.get("appointments_last_fetched", None)

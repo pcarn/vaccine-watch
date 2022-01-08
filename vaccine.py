@@ -8,6 +8,7 @@ from clinics.cosentinos import Cosentinos
 from clinics.hyvee import HyVee
 from clinics.rapid_test_kc import RapidTestKC
 from clinics.test_clinic import TestClinic
+from clinics.tests.cvs import CVSTests
 from clinics.vaccine_spotter import VaccineSpotter
 from notify.console import Console
 from notify.discord import Discord
@@ -32,6 +33,9 @@ if env_var_is_true("ENABLE_VACCINE_SPOTTER"):
     enabled_clinics.append(VaccineSpotter())
 if env_var_is_true("ENABLE_TEST"):
     enabled_clinics.append(TestClinic())
+if env_var_is_true("ENABLE_CVS_TESTS"):
+    enabled_clinics.append(CVSTests())
+
 
 enabled_notification_methods = []
 if env_var_is_true("NOTIFY_CONSOLE"):
@@ -90,23 +94,24 @@ def check_for_appointments():
     for location in unavailable_locations:
         # Some locations tend to toggle their locations to unavailable, then back again, which leads to a lot of noise.
         # Don't treat them as unavailable until they have been for one hour
+        # Edit - suspending this for now unless needed again
         if redis_client.get(cache_key(location)):
-            first_unavailable_cache_key = "{}first-unavailable-{}".format(
-                os.environ.get("CACHE_PREFIX", ""), location["id"]
-            )
-            first_unavailable_time = redis_client.get(first_unavailable_cache_key)
-            if first_unavailable_time:
-                if int(time.time()) - int(first_unavailable_time) > 60 * 60:
-                    redis_client.delete(first_unavailable_cache_key)
-                    redis_client.delete(cache_key(location))
-                    newly_unavailable_locations.append(location)
-            else:
-                print(
-                    "{} says unavailable, going to wait before notifying".format(
-                        location["name"]
-                    )
-                )
-                redis_client.set(first_unavailable_cache_key, int(time.time()))
+            # first_unavailable_cache_key = "{}first-unavailable-{}".format(
+            #     os.environ.get("CACHE_PREFIX", ""), location["id"]
+            # )
+            # first_unavailable_time = redis_client.get(first_unavailable_cache_key)
+            # if first_unavailable_time:
+            # if int(time.time()) - int(first_unavailable_time) > 60 * 60:
+            # redis_client.delete(first_unavailable_cache_key)
+            redis_client.delete(cache_key(location))
+            newly_unavailable_locations.append(location)
+            # else:
+            #     print(
+            #         "{} says unavailable, going to wait before notifying".format(
+            #             location["name"]
+            #         )
+            #     )
+            #     redis_client.set(first_unavailable_cache_key, int(time.time()))
         else:
             deleted = redis_client.delete(cache_key(location))
             if deleted == 1:

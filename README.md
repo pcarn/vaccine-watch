@@ -2,6 +2,7 @@
 Bot to notify when vaccine appointments are available.
 
 Supports checking Hy-Vee, Cosentino's stores (KC), Ball's stores (KC), Rapid Test KC, and locations checked by [VaccineSpotter](https://vaccinespotter.org) (including Walmart, Walgreens, CVS, Costco).
+Now supports checking CVS for COVID test appointments.
 Supports sending notifications to Slack, Discord, Microsoft Teams, Twilio, and [Twitter](https://twitter.com/kcvaccinewatch).
 
 Notifications are sent when a location has appointments. No more notifications are sent for that location until it becomes unavailable again.
@@ -76,10 +77,14 @@ Required Environment Variables:
 - `LATITUDE`: Latitude of the location to check (e.g. `39.1040382`)
 - `LONGITUDE`: Latitude of the location to check (e.g. `-94.5701803`)
 - `STATES`: JSON: Abbreviations of which states are in radius of your location (e.g. `["MO", "KS"]`)
+  - This is for if your area covers multiple states and you want to show which state a location is for
+- `ZIP`: Zip code to check for locations
+- `DAYS_OUT_TO_CHECK_FOR_TESTS`: How many days out to check for COVID tests (e.g. `1`)
 
 Optional Environment Variables:
 - `REQUEST_TIMEOUT`: How long to wait, in seconds, for a response to begin before timing out (optional, defaults to 5 seconds)
 - `ENABLE_BALLS`: If you want to check stores in the [Ball's family](https://ballsfoodspharmacy.com/) (Kansas City only)
+- `ENABLE_CVS_TESTS`: If you want to check for COVID test appointments at CVS
 - `ENABLE_COSENTINOS`: If you want to check stores in the [Cosentino's family](https://www.cosentinos.com/covid-vaccine) (Kansas City only)
 - `ENABLE_HYVEE`: If you want to check Hy-Vee pharmacies
 - `ENABLE_VACCINE_SPOTTER`: If you want to check locations checked by [VaccineSpotter](https://vaccinespotter.org) (Excluding Hy-Vee)
