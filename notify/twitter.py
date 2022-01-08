@@ -98,8 +98,8 @@ def format_available_message(location, retry_attempt):
             day_string = " from {} to {}".format(
                 location["earliest_appointment_day"], location["latest_appointment_day"]
             )
-    elif "appointment_dates" in location:
-        day_string = " on {}".format(", ".join(location["appointment_dates"]))
+    elif "available_appointment_dates" in location:
+        day_string = " on {}".format(", ".join(location["available_appointment_dates"]))
     else:
         day_string = ""
 
