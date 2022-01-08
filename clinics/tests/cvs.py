@@ -13,6 +13,11 @@ from . import TestClinic
 
 DAYS_OUT_TO_CHECK = int(os.environ["DAYS_OUT_TO_CHECK_FOR_TESTS"])
 
+PROXIES = {}
+if "PROXY_URL" in os.environ:
+    PROXIES["https"] = os.environ["PROXY_URL"]
+    PROXIES["http"] = os.environ["PROXY_URL"]
+
 
 class CVSTests(TestClinic):
     def get_locations(self):
@@ -79,6 +84,7 @@ def get_available_dates(clinic_id, dates, days_out_to_check):
         headers=headers,
         json=body,
         timeout=timeout_amount,
+        proxies=PROXIES,
     )
     try:
         response.raise_for_status()
@@ -104,7 +110,9 @@ def get_available_dates(clinic_id, dates, days_out_to_check):
 
 def get_all_location_data():
     main_page_response = requests.get(
-        "https://www.cvs.com/minuteclinic/covid-19-testing", timeout=timeout_amount
+        "https://www.cvs.com/minuteclinic/covid-19-testing",
+        timeout=timeout_amount,
+        proxies=PROXIES,
     )
     if not main_page_response.ok:
         # If main page is shut off (503 with "We have finished testing for the day."), don't go any further
@@ -138,6 +146,7 @@ def get_all_location_data():
         headers=headers,
         json=body,
         timeout=timeout_amount,
+        proxies=PROXIES,
     )
     try:
         response.raise_for_status()

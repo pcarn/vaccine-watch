@@ -109,6 +109,7 @@ Optional Environment Variables:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
 - `TIMEZONE`: Timezone of your location (defaults to `'US/Central'`)
 - `CACHE_PREFIX`: If you want to run multiple copies of vaccine-watch, all sharing the same Redis database, you will want to give each instance a different CACHE_PREFIX.
+- `PROXY_URL`: To use a proxy for CVS Tests requests (since they seem to block heroku)
 
 ### Docker
 You can build a docker image with the Dockerfile, and run it with a redis server.
