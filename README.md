@@ -107,6 +107,7 @@ Optional Environment Variables:
     - example: `["+15551234567", "+15552345678"]`
 - Twitter:
   - `TWITTER_CONSUMER_KEY`, `TWITTER_CONSUMER_SECRET`, `TWITTER_ACCESS_TOKEN_KEY`, `TWITTER_ACCESS_TOKEN_SECRET`
+  - `SEND_UNAVAILABLE_TWEET`: If a tweet should be sent when a location is no longer available (defaults to false)
 - `TIMEZONE`: Timezone of your location (defaults to `'US/Central'`)
 - `CACHE_PREFIX`: If you want to run multiple copies of vaccine-watch, all sharing the same Redis database, you will want to give each instance a different CACHE_PREFIX.
 - `PROXY_URL`: To use a proxy for CVS Tests requests (since they seem to block heroku)

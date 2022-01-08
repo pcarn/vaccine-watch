@@ -6,6 +6,8 @@ import redis
 import requests
 import twitter
 
+from utils import env_var_is_true
+
 from . import NotificationMethod
 from .utils import shorten_url
 
@@ -59,30 +61,31 @@ class Twitter(NotificationMethod):
                 logging.error("Five consecutive errors when posting tweet")
 
     def notify_unavailable_locations(self, locations):
-        for location in locations:
-            for retry_attempt in range(0, 5):
-                try:
-                    previous_tweet_id = redis_client.get(self.cache_key(location))
-                    if previous_tweet_id:
-                        self.post_tweet(
-                            format_unavailable_message(location),
-                            in_reply_to_status_id=previous_tweet_id,
+        if env_var_is_true("SEND_UNAVAILABLE_TWEET"):
+            for location in locations:
+                for retry_attempt in range(0, 5):
+                    try:
+                        previous_tweet_id = redis_client.get(self.cache_key(location))
+                        if previous_tweet_id:
+                            self.post_tweet(
+                                format_unavailable_message(location),
+                                in_reply_to_status_id=previous_tweet_id,
+                            )
+                    except twitter.error.TwitterError:
+                        logging.exception("Error when posting tweet")
+                        break
+                    except (requests.exceptions.RequestException, ConnectionResetError):
+                        logging.exception(
+                            "Connection error when posting tweet{}".format(
+                                ", will retry" if retry_attempt < 4 else ""
+                            )
                         )
-                except twitter.error.TwitterError:
-                    logging.exception("Error when posting tweet")
-                    break
-                except (requests.exceptions.RequestException, ConnectionResetError):
-                    logging.exception(
-                        "Connection error when posting tweet{}".format(
-                            ", will retry" if retry_attempt < 4 else ""
-                        )
-                    )
+                    else:
+                        redis_client.delete(self.cache_key(location))
+                        break
                 else:
                     redis_client.delete(self.cache_key(location))
-                    break
-            else:
-                redis_client.delete(self.cache_key(location))
-                logging.error("Five consecutive errors when posting tweet")
+                    logging.error("Five consecutive errors when posting tweet")
 
 
 emojis = [None, "😷", "💉", "😷💉", "💉😷"]
