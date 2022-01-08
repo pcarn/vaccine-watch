@@ -46,7 +46,7 @@ class Twitter(NotificationMethod):
                     redis_client.set(
                         self.cache_key(location),
                         response.id,
-                        timeout=(60 * 60 * 24),  # one day
+                        ex=(60 * 60 * 24),  # one day
                     )
                 except twitter.error.TwitterError as exception:
                     if retry_attempt < 4 and exception.message[0]["code"] == 187:
