@@ -119,7 +119,11 @@ def get_all_location_data():
         return []
 
     location_index_url = "https://www.cvs.com/RETAGPV3/MCscheduler/V1/storeScheduler"
-    params = {"addressLine": 64106, "mileRadius": 100, "maxCount": 100}
+    params = {
+        "addressLine": os.environ["ZIP"],
+        "mileRadius": int(os.environ["RADIUS"]),
+        "maxCount": 100,
+    }
     headers = {
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36",
         "x-application-id": "vaccine-watch",
