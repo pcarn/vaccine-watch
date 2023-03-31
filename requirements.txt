@@ -3,7 +3,7 @@ geopy==2.1.0
 icecream==2.1.1
 python-dateutil==2.8.2
 python-twitter==3.5
-redis==3.5.3
+redis==4.4.4
 requests==2.25.1
 slack-sdk==3.5.1
 twilio==6.59.0
